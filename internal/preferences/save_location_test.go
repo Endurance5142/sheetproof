@@ -176,7 +176,7 @@ func TestStoreClearsAllDataWithoutTouchingLanguageChoice(t *testing.T) {
 		}
 	}
 	store := NewStoreAt(filepath.Join(root, "config", preferencesFilename))
-	if err := store.RecordLanguagePreference("zh-CN"); err != nil {
+	if err := store.RecordLanguagePreference("ru"); err != nil {
 		t.Fatal(err)
 	}
 	if err := store.RecordSaveTarget(filepath.Join(saveDirectory, "book.xlsx")); err != nil {
@@ -217,7 +217,7 @@ func TestStoreClearsAllDataWithoutTouchingLanguageChoice(t *testing.T) {
 	if got := reopened.SaveDirectory(); got == saveDirectory {
 		t.Fatalf("save directory was retained: %q", got)
 	}
-	if got := reopened.LanguagePreference(); got != "zh-CN" {
+	if got := reopened.LanguagePreference(); got != "ru" {
 		t.Fatalf("language changed to %q", got)
 	}
 }

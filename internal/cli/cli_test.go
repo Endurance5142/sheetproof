@@ -586,6 +586,17 @@ func TestParseLanguageDistinguishesEnvironmentDefaultFromExplicitOverride(t *tes
 	if len(args) != 1 || args[0] != "compare" {
 		t.Fatalf("remaining args = %q", args)
 	}
+
+	args, locale, explicit, err = parseLanguage([]string{"compare", "--lang", "ru-RU"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !explicit || locale != localization.Russian {
+		t.Fatalf("explicit locale = %q, explicit = %t", locale, explicit)
+	}
+	if len(args) != 1 || args[0] != "compare" {
+		t.Fatalf("remaining args = %q", args)
+	}
 }
 
 func TestRepositoryCommandValidatesAndPassesExactFileAndRef(t *testing.T) {

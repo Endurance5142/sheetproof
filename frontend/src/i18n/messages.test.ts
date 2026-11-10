@@ -31,4 +31,19 @@ describe("desktop message catalogs", () => {
     expect(ja["toolbar.copyCellsToLeft"]({ count: 3 })).toBe("左側へ反映（3）");
     expect(ru["toolbar.copyCellsToLeft"]({ count: 3 })).toBe("Применить слева (3)");
   });
+
+  it("uses Russian plural forms for counts ending in 1, 2-4, 5-20, and 11-14", () => {
+    expect(ru["diff.count"]({ count: 1 })).toBe("1 различие");
+    expect(ru["diff.count"]({ count: 21 })).toBe("21 различие");
+    expect(ru["diff.count"]({ count: 2 })).toBe("2 различия");
+    expect(ru["diff.count"]({ count: 22 })).toBe("22 различия");
+    expect(ru["diff.count"]({ count: 5 })).toBe("5 различий");
+    expect(ru["diff.count"]({ count: 11 })).toBe("11 различий");
+    expect(ru["diff.count"]({ count: 112 })).toBe("112 различий");
+    expect(ru["diff.selectedCells"]({ count: 21 })).toBe("Выбрана 21 ячейка");
+    expect(ru["diff.selectedCells"]({ count: 3 })).toBe("Выбраны 3 ячейки");
+    expect(ru["diff.selectedCells"]({ count: 12 })).toBe("Выбрано 12 ячеек");
+    expect(ru["context.selectedRows"]({ count: 1, row: 7 })).toBe("Строка 7");
+    expect(ru["context.selectedRows"]({ count: 21, row: 7 })).toBe("Выбрано строк: 21");
+  });
 });
