@@ -74,6 +74,8 @@ func launchGUIWithDiagnostics(left, right string, appOptions coreapp.Options, di
 			title = "SheetProof — XLSX 差异审阅"
 		case localization.Japanese:
 			title = "SheetProof — XLSX 差分レビュー"
+		case localization.Russian:
+			title = "SheetProof — обзор различий XLSX"
 		default:
 			title = "SheetProof — XLSX diff review"
 		}

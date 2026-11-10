@@ -5,13 +5,14 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const check = process.argv.includes("--check");
 const locales = ["en", "zh-CN", "ja"];
+const productLocales = [...locales, "ru"];
 const generatedNotice = "Generated from product facts and locale content. Do not edit directly.";
 
 const readJSON = async (path) => JSON.parse(await readFile(resolve(root, path), "utf8"));
 const facts = await readJSON("product/product.json");
 const glossary = await readJSON("product/glossary.json");
 const releases = await readJSON("product/changelog/releases.json");
-const localeContent = Object.fromEntries(await Promise.all(locales.map(async (locale) => [locale, await readJSON(`product/locales/${locale}.json`)])));
+const localeContent = Object.fromEntries(await Promise.all(productLocales.map(async (locale) => [locale, await readJSON(`product/locales/${locale}.json`)])));
 const changelogContent = Object.fromEntries(await Promise.all(locales.map(async (locale) => [locale, await readJSON(`product/changelog/${locale}.json`)])));
 
 function fail(message) {
@@ -28,8 +29,10 @@ function compareShape(reference, candidate, label) {
   if (JSON.stringify(shape(reference)) !== JSON.stringify(shape(candidate))) fail(`${label} keys do not match English`);
 }
 
-for (const locale of locales.slice(1)) {
+for (const locale of productLocales.slice(1)) {
   compareShape(localeContent.en, localeContent[locale], `product/locales/${locale}.json`);
+}
+for (const locale of locales.slice(1)) {
   compareShape(changelogContent.en, changelogContent[locale], `product/changelog/${locale}.json`);
 }
 
@@ -49,8 +52,8 @@ for (const release of releases.releases) {
 }
 
 for (const [concept, translations] of Object.entries(glossary)) {
-  if (JSON.stringify(Object.keys(translations).sort()) !== JSON.stringify([...locales].sort())) fail(`glossary.${concept} does not contain all locales`);
-  if (locales.some((locale) => !translations[locale])) fail(`glossary.${concept} has an empty translation`);
+  if (locales.some((locale) => !translations[locale])) fail(`glossary.${concept} does not contain all locales`);
+  if (Object.values(translations).some((value) => !value)) fail(`glossary.${concept} has an empty translation`);
 }
 
 for (const locale of locales) {

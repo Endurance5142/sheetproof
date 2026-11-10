@@ -344,6 +344,11 @@ func sourceLabel(locale localization.Locale, key string) string {
 			"selectedRevision":   "選択したリビジョン",
 			"comparisonRevision": "比較対象のリビジョン",
 		},
+		localization.Russian: {
+			"worktree":           "Текущее рабочее дерево",
+			"selectedRevision":   "Выбранная версия",
+			"comparisonRevision": "Версия для сравнения",
+		},
 	}
 	return labels[locale][key]
 }

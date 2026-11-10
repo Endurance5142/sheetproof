@@ -333,6 +333,8 @@ func defaultOptions(options Options) Options {
 			options.LeftLabel = "本地（可编辑）"
 		case localization.Japanese:
 			options.LeftLabel = "ローカル（編集可能）"
+		case localization.Russian:
+			options.LeftLabel = "Локально (редактируемая)"
 		default:
 			options.LeftLabel = "Local (editable)"
 		}
@@ -343,6 +345,8 @@ func defaultOptions(options Options) Options {
 			options.RightLabel = "对比来源（只读）"
 		case localization.Japanese:
 			options.RightLabel = "比較元（読み取り専用）"
+		case localization.Russian:
+			options.RightLabel = "Источник сравнения (только чтение)"
 		default:
 			options.RightLabel = "Comparison source (read-only)"
 		}
@@ -359,17 +363,21 @@ func alignmentWarning(locale string, moved int) string {
 		return fmt.Sprintf("检测到 %d 条同 ID 记录位于不同物理行。已按唯一 ID 对齐，避免将插入或删除显示为连续修改。", moved)
 	case localization.Japanese:
 		return fmt.Sprintf("同じ ID のレコード %d 件が異なる物理行にあります。挿入や削除を連続した変更として扱わないよう、一意の ID で揃えて表示しています。", moved)
+	case localization.Russian:
+		return fmt.Sprintf("Записей с одинаковым ID на разных физических строках: %d. Они выровнены по уникальному ID, чтобы вставка или удаление не показывались как серия изменений.", moved)
 	default:
 		return fmt.Sprintf("%d records with the same ID are on different physical rows. They are aligned by unique ID so an insertion or deletion does not appear as a series of changes.", moved)
 	}
 }
 
-func sessionText(locale, english, chinese, japanese string) string {
+func sessionText(locale, english, chinese, japanese, russian string) string {
 	switch localization.Normalize(locale) {
 	case localization.SimplifiedChinese:
 		return chinese
 	case localization.Japanese:
 		return japanese
+	case localization.Russian:
+		return russian
 	default:
 		return english
 	}
@@ -545,7 +553,7 @@ func (s *Session) ReloadRight() error {
 	if s.rightSource == nil {
 		locale := s.options.Locale
 		s.mu.RUnlock()
-		return errors.New(sessionText(locale, "There is no workbook to reload on the right.", "当前没有可重新载入的右侧工作簿。", "右側に再読み込みできるブックがありません。"))
+		return errors.New(sessionText(locale, "There is no workbook to reload on the right.", "当前没有可重新载入的右侧工作簿。", "右側に再読み込みできるブックがありません。", "Нет книги справа, которую можно перезагрузить."))
 	}
 	path, label := s.rightSource.Path, s.options.RightLabel
 	s.mu.RUnlock()
@@ -645,15 +653,15 @@ func rowAlignmentApplied(sheets map[string]bool) bool {
 
 func (s *Session) SetRowAlignment(mode RowAlignmentMode) error {
 	if mode != RowAlignmentAuto && mode != RowAlignmentPosition {
-		return fmt.Errorf("%s: %s", sessionText(s.options.Locale, "Unknown row alignment mode", "未知的行对齐方式", "不明な行の比較方法"), mode)
+		return fmt.Errorf("%s: %s", sessionText(s.options.Locale, "Unknown row alignment mode", "未知的行对齐方式", "不明な行の比較方法", "Неизвестный режим выравнивания строк"), mode)
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.options.GitMerge {
-		return errors.New(sessionText(s.options.Locale, "Git merge sessions always use ID alignment.", "Git 合并会话固定使用 ID 对齐。", "Git マージセッションでは常に ID で揃えて比較します。"))
+		return errors.New(sessionText(s.options.Locale, "Git merge sessions always use ID alignment.", "Git 合并会话固定使用 ID 对齐。", "Git マージセッションでは常に ID で揃えて比較します。", "Сеансы объединения Git всегда используют выравнивание по ID."))
 	}
 	if s.history.Len() > 0 {
-		return errors.New(sessionText(s.options.Locale, "Undo all edits and merge actions before changing row alignment.", "请先撤销所有编辑和合并操作，再切换行对齐方式。", "行の比較方法を変える前に、編集と反映操作をすべて元に戻してください。"))
+		return errors.New(sessionText(s.options.Locale, "Undo all edits and merge actions before changing row alignment.", "请先撤销所有编辑和合并操作，再切换行对齐方式。", "行の比較方法を変える前に、編集と反映操作をすべて元に戻してください。", "Отмените все правки и операции объединения, прежде чем менять выравнивание строк."))
 	}
 	if s.alignmentMode == mode {
 		return nil
@@ -682,7 +690,7 @@ func (s *Session) SetKeyColumn(sheet string, column int) error {
 		return fmt.Errorf("invalid key column %d for worksheet %q", column, sheet)
 	}
 	if s.history.Len() > 0 {
-		return errors.New(sessionText(s.options.Locale, "Undo all edits and merge actions before changing the key column.", "请先撤销所有编辑和合并操作，再更改主键列。", "キー列を変える前に、編集と反映操作をすべて元に戻してください。"))
+		return errors.New(sessionText(s.options.Locale, "Undo all edits and merge actions before changing the key column.", "请先撤销所有编辑和合并操作，再更改主键列。", "キー列を変える前に、編集と反映操作をすべて元に戻してください。", "Отмените все правки и операции объединения, прежде чем менять ключевую колонку."))
 	}
 	if s.keyColumns == nil {
 		s.keyColumns = make(map[string]int)
@@ -1079,10 +1087,10 @@ func (s *Session) copyRightToLeftManyLocked(
 	kind string,
 ) error {
 	if s.options.ReadonlyLeft {
-		return fmt.Errorf("%s", sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。"))
+		return fmt.Errorf("%s", sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。", "Левая книга доступна только для чтения."))
 	}
 	if s.right == nil || s.rightFile == nil {
-		return fmt.Errorf("%s", sessionText(s.options.Locale, "There is no workbook on the right to copy from.", "当前没有可供复制的右侧工作簿。", "右側に反映元となるブックがありません。"))
+		return fmt.Errorf("%s", sessionText(s.options.Locale, "There is no workbook on the right to copy from.", "当前没有可供复制的右侧工作簿。", "右側に反映元となるブックがありません。", "Нет книги справа, из которой можно копировать."))
 	}
 	if s.right.ByName[sheet] == nil || s.left.ByName[sheet] == nil {
 		return fmt.Errorf("worksheet %q must exist on both sides", sheet)
@@ -1123,7 +1131,7 @@ func (s *Session) copyRightToLeftManyLocked(
 			return errors.New(sessionText(s.options.Locale,
 				"This column does not exist on the left. Copy the whole column first.",
 				"左侧尚无此列，请先复制整列到左侧。",
-				"左側にこの列がありません。先に列全体を左側へ反映してください。"))
+				"左側にこの列がありません。先に列全体を左側へ反映してください。", "Этого столбца нет слева. Сначала скопируйте столбец целиком."))
 		}
 		before, err := merge.Capture(s.leftFile, targetRef)
 		if err != nil {
@@ -1227,7 +1235,7 @@ func (s *Session) CopyRowsRightToLeft(sheet string, rows []int) error {
 		return errors.New("no rows selected")
 	}
 	if s.right == nil || s.rightFile == nil {
-		return errors.New(sessionText(s.options.Locale, "There is no workbook on the right to copy from.", "当前没有可供复制的右侧工作簿。", "右側に反映元となるブックがありません。"))
+		return errors.New(sessionText(s.options.Locale, "There is no workbook on the right to copy from.", "当前没有可供复制的右侧工作簿。", "右側に反映元となるブックがありません。", "Нет книги справа, из которой можно копировать."))
 	}
 	leftSheet, rightSheet := s.left.ByName[sheet], s.right.ByName[sheet]
 	if leftSheet == nil || rightSheet == nil {
@@ -1258,10 +1266,10 @@ func (s *Session) CopyColumnsRightToLeft(sheet string, columns []int) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.options.ReadonlyLeft {
-		return errors.New(sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。"))
+		return errors.New(sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。", "Левая книга доступна только для чтения."))
 	}
 	if s.rightSource == nil || s.rightFile == nil {
-		return errors.New(sessionText(s.options.Locale, "There is no workbook on the right to copy from.", "当前没有可供复制的右侧工作簿。", "右側に反映元となるブックがありません。"))
+		return errors.New(sessionText(s.options.Locale, "There is no workbook on the right to copy from.", "当前没有可供复制的右侧工作簿。", "右側に反映元となるブックがありません。", "Нет книги справа, из которой можно копировать."))
 	}
 	leftSheet, rightSheet := s.left.ByName[sheet], s.rightSource.ByName[sheet]
 	if leftSheet == nil || rightSheet == nil {
@@ -1289,7 +1297,7 @@ func (s *Session) CopyColumnsRightToLeft(sheet string, columns []int) error {
 		return errors.New(sessionText(s.options.Locale,
 			"Too many cells selected for a whole-column copy (maximum 10000).",
 			"整列复制的单元格过多（最多 10000 个）。",
-			"列全体の反映対象が多すぎます（最大 10000 セル）。"))
+			"列全体の反映対象が多すぎます（最大 10000 セル）。", "Выбрано слишком много ячеек для копирования целых столбцов (максимум 10000)."))
 	}
 
 	insertions := make([]history.ColumnInsertion, 0)
@@ -1335,7 +1343,7 @@ func (s *Session) CopyColumnsRightToLeft(sheet string, columns []int) error {
 		}
 	}
 	if len(operations) == 0 {
-		return errors.New(sessionText(s.options.Locale, "The selected columns do not exist on the right.", "右侧不存在所选列。", "選択した列は右側にありません。"))
+		return errors.New(sessionText(s.options.Locale, "The selected columns do not exist on the right.", "右侧不存在所选列。", "選択した列は右側にありません。", "Выбранных столбцов нет справа."))
 	}
 	for index, operation := range operations {
 		warnings, err := merge.Apply(s.leftFile, operation.Ref, operation.After)
@@ -1362,10 +1370,10 @@ func (s *Session) DeleteLeftColumns(sheet string, columns []int) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.options.ReadonlyLeft {
-		return errors.New(sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。"))
+		return errors.New(sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。", "Левая книга доступна только для чтения."))
 	}
 	if s.rightSource == nil {
-		return errors.New(sessionText(s.options.Locale, "There is no workbook on the right to reconcile with.", "当前没有可用于恢复结构的右侧工作簿。", "列構成の復元に使える右側のブックがありません。"))
+		return errors.New(sessionText(s.options.Locale, "There is no workbook on the right to reconcile with.", "当前没有可用于恢复结构的右侧工作簿。", "列構成の復元に使える右側のブックがありません。", "Нет книги справа, с которой можно восстановить структуру."))
 	}
 	leftSheet, rightSheet := s.left.ByName[sheet], s.rightSource.ByName[sheet]
 	if leftSheet == nil || rightSheet == nil {
@@ -1408,13 +1416,13 @@ func (s *Session) DeleteLeftColumns(sheet string, columns []int) error {
 		return errors.New(sessionText(s.options.Locale,
 			"The selected columns are not left-only columns.",
 			"所选列不是仅存在于左侧的列。",
-			"選択した列は左側だけにある列ではありません。"))
+			"選択した列は左側だけにある列ではありません。", "Выбранные столбцы не являются столбцами, существующими только слева."))
 	}
 	if len(removals)*leftSheet.MaxRow > 10000 {
 		return errors.New(sessionText(s.options.Locale,
 			"Too many cells selected for whole-column removal (maximum 10000).",
 			"整列删除的单元格过多（最多 10000 个）。",
-			"列全体の削除対象が多すぎます（最大 10000 セル）。"))
+			"列全体の削除対象が多すぎます（最大 10000 セル）。", "Выбрано слишком много ячеек для удаления целых столбцов (максимум 10000)."))
 	}
 	sort.Slice(removals, func(i, j int) bool { return removals[i].Column > removals[j].Column })
 	applied := make([]history.ColumnRemoval, 0, len(removals))
@@ -1552,10 +1560,10 @@ func (s *Session) AppendRowsRightToLeft(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.options.ReadonlyLeft {
-		return nil, errors.New(sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。"))
+		return nil, errors.New(sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。", "Левая книга доступна только для чтения."))
 	}
 	if s.right == nil || s.rightFile == nil {
-		return nil, errors.New(sessionText(s.options.Locale, "There is no workbook on the right to append from.", "当前没有可供追加的右侧工作簿。", "右側に追加元となるブックがありません。"))
+		return nil, errors.New(sessionText(s.options.Locale, "There is no workbook on the right to append from.", "当前没有可供追加的右侧工作簿。", "右側に追加元となるブックがありません。", "Нет книги справа, из которой можно добавлять строки."))
 	}
 	leftSheet, rightSheet := s.left.ByName[sheet], s.right.ByName[sheet]
 	if leftSheet == nil || rightSheet == nil {
@@ -1566,12 +1574,12 @@ func (s *Session) AppendRowsRightToLeft(
 		return nil, err
 	}
 	if len(requestedIDs) != 0 && len(requestedIDs) != len(unique) {
-		return nil, errors.New(sessionText(s.options.Locale, "Provide one ID for each selected row.", "每个选中行都需要指定一个 ID。", "選択した各行に 1 つずつ ID を指定してください。"))
+		return nil, errors.New(sessionText(s.options.Locale, "Provide one ID for each selected row.", "每个选中行都需要指定一个 ID。", "選択した各行に 1 つずつ ID を指定してください。", "Укажите ID для каждой выбранной строки."))
 	}
 	sheetDiff := s.sheetDiffLocked(sheet)
 	for _, row := range unique {
 		if s.rowStatusLocked(sheet, row) != diff.RowConflict {
-			return nil, fmt.Errorf(sessionText(s.options.Locale, "Row %d on the right is not a conflict and cannot be appended.", "右侧第 %d 行不是冲突行，不能追加到左侧。", "右側の %d 行目は競合行ではないため追加できません。"), row)
+			return nil, fmt.Errorf(sessionText(s.options.Locale, "Row %d on the right is not a conflict and cannot be appended.", "右侧第 %d 行不是冲突行，不能追加到左侧。", "右側の %d 行目は競合行ではないため追加できません。", "Строка %d справа не является конфликтом и не может быть добавлена."), row)
 		}
 	}
 	idColumn := 0
@@ -1579,7 +1587,7 @@ func (s *Session) AppendRowsRightToLeft(
 		idColumn = sheetDiff.IDColumn
 	}
 	if idColumn == 0 && len(requestedIDs) != 0 {
-		return nil, errors.New(sessionText(s.options.Locale, "This sheet has no integer ID column for assigned IDs.", "当前工作表没有可用的整数 ID 列，无法指定 ID。", "このシートには整数の ID 列がないため、ID を指定できません。"))
+		return nil, errors.New(sessionText(s.options.Locale, "This sheet has no integer ID column for assigned IDs.", "当前工作表没有可用的整数 ID 列，无法指定 ID。", "このシートには整数の ID 列がないため、ID を指定できません。", "На этом листе нет целочисленной колонки ID для назначаемых ID."))
 	}
 	maxCol := max(s.comparisonLeft.ByName[sheet].MaxCol, s.right.ByName[sheet].MaxCol)
 	if len(unique)*maxCol > 10000 {
@@ -1598,7 +1606,7 @@ func (s *Session) AppendRowsRightToLeft(
 		assigned = make([]string, len(unique))
 		if len(requestedIDs) == 0 {
 			if sheetDiff.NextID <= 0 {
-				return nil, errors.New(sessionText(s.options.Locale, "The next integer ID could not be calculated from the left ID column.", "无法根据左侧 ID 列计算下一个整数 ID。", "左側の ID 列から次の整数 ID を計算できません。"))
+				return nil, errors.New(sessionText(s.options.Locale, "The next integer ID could not be calculated from the left ID column.", "无法根据左侧 ID 列计算下一个整数 ID。", "左側の ID 列から次の整数 ID を計算できません。", "Следующий целочисленный ID не удалось вычислить из колонки ID слева."))
 			}
 			for index := range assigned {
 				assigned[index] = strconv.FormatInt(sheetDiff.NextID+int64(index), 10)
@@ -1607,13 +1615,13 @@ func (s *Session) AppendRowsRightToLeft(
 			for index, id := range requestedIDs {
 				assigned[index] = strings.TrimSpace(id)
 				if assigned[index] == "" {
-					return nil, fmt.Errorf(sessionText(s.options.Locale, "The ID for selected row %d cannot be empty.", "第 %d 个选中行的指定 ID 不能为空。", "選択行 %d の ID は空にできません。"), index+1)
+					return nil, fmt.Errorf(sessionText(s.options.Locale, "The ID for selected row %d cannot be empty.", "第 %d 个选中行的指定 ID 不能为空。", "選択行 %d の ID は空にできません。", "ID выбранной строки %d не может быть пустым."), index+1)
 				}
 			}
 		}
 		for _, id := range assigned {
 			if _, exists := existingIDs[id]; exists {
-				return nil, fmt.Errorf(sessionText(s.options.Locale, "ID %s already exists on the left.", "左侧已存在 ID %s。", "左側には ID %s がすでに存在します。"), id)
+				return nil, fmt.Errorf(sessionText(s.options.Locale, "ID %s already exists on the left.", "左侧已存在 ID %s。", "左側には ID %s がすでに存在します。", "ID %s уже существует слева."), id)
 			}
 			existingIDs[id] = struct{}{}
 		}
@@ -1630,7 +1638,7 @@ func (s *Session) AppendRowsRightToLeft(
 			}
 		}
 		if !hasSource {
-			return nil, fmt.Errorf(sessionText(s.options.Locale, "Row %d on the right has no data to append.", "右侧第 %d 行没有可追加的数据。", "右側の %d 行目には追加できるデータがありません。"), sourceRow)
+			return nil, fmt.Errorf(sessionText(s.options.Locale, "Row %d on the right has no data to append.", "右侧第 %d 行没有可追加的数据。", "右側の %d 行目には追加できるデータがありません。", "Строка %d справа не содержит данных для добавления."), sourceRow)
 		}
 		targetRow := targetStart + index
 		for col := 1; col <= maxCol; col++ {
@@ -1639,7 +1647,7 @@ func (s *Session) AppendRowsRightToLeft(
 				return nil, errors.New(sessionText(s.options.Locale,
 					"A source column does not exist on the left. Copy that whole column first.",
 					"左侧缺少来源列，请先复制对应整列。",
-					"左側に元の列がありません。先にその列全体を反映してください。"))
+					"左側に元の列がありません。先にその列全体を反映してください。", "Исходного столбца нет слева. Сначала скопируйте этот столбец целиком."))
 			}
 			targetRef := workbook.CellRef{Sheet: sheet, Row: targetRow, Col: physicalCol}
 			before, captureErr := merge.Capture(s.leftFile, targetRef)
@@ -1710,7 +1718,7 @@ func (s *Session) rollbackCopiesLocked(operations []merge.Operation) {
 	for index := len(operations) - 1; index >= 0; index-- {
 		operation := operations[index]
 		if _, err := merge.Apply(s.leftFile, operation.Ref, operation.Before); err != nil {
-			s.warnings = append(s.warnings, fmt.Sprintf(sessionText(s.options.Locale, "Could not roll back %s: %v", "回滚 %s 失败：%v", "%s を元に戻せませんでした：%v"), operation.Ref.Axis(), err))
+			s.warnings = append(s.warnings, fmt.Sprintf(sessionText(s.options.Locale, "Could not roll back %s: %v", "回滚 %s 失败：%v", "%s を元に戻せませんでした：%v", "Не удалось откатить %s: %v"), operation.Ref.Axis(), err))
 			continue
 		}
 		if restored, err := merge.Capture(s.leftFile, operation.Ref); err == nil {
@@ -1734,7 +1742,7 @@ func (s *Session) EditLeft(ref workbook.CellRef, value, valueType string) error 
 		return errors.New(sessionText(s.options.Locale,
 			"This column does not exist on the editable workbook.",
 			"可编辑工作簿中不存在此列。",
-			"編集可能なブックにこの列はありません。"))
+			"編集可能なブックにこの列はありません。", "Этого столбца нет в редактируемой книге."))
 	}
 	before, err := merge.Capture(s.leftFile, ref)
 	if err != nil {
@@ -1916,7 +1924,7 @@ func (s *Session) PasteLeftText(sheetName string, startRow, startCol int, text s
 				return errors.New(sessionText(s.options.Locale,
 					"The pasted range extends beyond the editable workbook's columns.",
 					"粘贴范围超出了可编辑工作簿的现有列。",
-					"貼り付け範囲が編集可能なブックの既存列を超えています。"))
+					"貼り付け範囲が編集可能なブックの既存列を超えています。", "Вставляемый диапазон выходит за пределы столбцов редактируемой книги."))
 			}
 		}
 	}
@@ -2165,7 +2173,7 @@ func (s *Session) restoreUndoneLocked(operations []merge.Operation) {
 	for index := len(operations) - 1; index >= 0; index-- {
 		operation := operations[index]
 		if _, err := merge.Apply(s.leftFile, operation.Ref, operation.After); err != nil {
-			s.warnings = append(s.warnings, fmt.Sprintf(sessionText(s.options.Locale, "Could not restore %s: %v", "恢复 %s 失败：%v", "%s を復元できませんでした：%v"), operation.Ref.Axis(), err))
+			s.warnings = append(s.warnings, fmt.Sprintf(sessionText(s.options.Locale, "Could not restore %s: %v", "恢复 %s 失败：%v", "%s を復元できませんでした：%v", "Не удалось восстановить %s: %v"), operation.Ref.Axis(), err))
 			continue
 		}
 		if restored, err := merge.Capture(s.leftFile, operation.Ref); err == nil {
@@ -2213,10 +2221,10 @@ func (s *Session) Export(target string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.options.ReadonlyLeft {
-		return fmt.Errorf("%s", sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。"))
+		return fmt.Errorf("%s", sessionText(s.options.Locale, "The workbook on the left is read-only.", "左侧工作簿为只读，无法修改。", "左側のブックは読み取り専用のため編集できません。", "Левая книга доступна только для чтения."))
 	}
 	if strings.TrimSpace(target) == "" {
-		return errors.New(sessionText(s.options.Locale, "Choose a destination for the exported copy.", "请选择导出副本的保存位置。", "書き出すコピーの保存先を選択してください。"))
+		return errors.New(sessionText(s.options.Locale, "Choose a destination for the exported copy.", "请选择导出副本的保存位置。", "書き出すコピーの保存先を選択してください。", "Выберите место сохранения экспортируемой копии."))
 	}
 	abs, err := filepath.Abs(target)
 	if err != nil {
@@ -2224,7 +2232,7 @@ func (s *Session) Export(target string) error {
 	}
 	leftAbs, _ := filepath.Abs(s.left.Path)
 	if filepath.Clean(abs) == filepath.Clean(leftAbs) {
-		return errors.New(sessionText(s.options.Locale, "The export destination is the current worktree file. Use Save to worktree instead.", "导出位置就是当前工作区文件，请改用“保存到工作区”。", "書き出し先が現在のワークツリーファイルと同じです。「ワークツリーに保存」を使用してください。"))
+		return errors.New(sessionText(s.options.Locale, "The export destination is the current worktree file. Use Save to worktree instead.", "导出位置就是当前工作区文件，请改用“保存到工作区”。", "書き出し先が現在のワークツリーファイルと同じです。「ワークツリーに保存」を使用してください。", "Место экспорта совпадает с файлом текущего рабочего дерева. Используйте «Сохранить в рабочее дерево»."))
 	}
 	_, err = (storage.SafeWriter{}).Save(s.leftFile, abs, nil)
 	return err

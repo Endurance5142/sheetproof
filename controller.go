@@ -1922,6 +1922,8 @@ func workspaceLabel(view RepositoryView, locale string) string {
 		prefix = "当前工作区"
 	case localization.Japanese:
 		prefix = "現在のワークツリー"
+	case localization.Russian:
+		prefix = "Текущее рабочее дерево"
 	}
 	if view.Detached {
 		return prefix + " · Detached HEAD"
@@ -1935,6 +1937,8 @@ func comparisonRevisionLabel(locale string) string {
 		return "对比版本（只读）"
 	case localization.Japanese:
 		return "比較対象のリビジョン（読み取り専用）"
+	case localization.Russian:
+		return "Версия для сравнения (только чтение)"
 	default:
 		return "Comparison revision (read-only)"
 	}
@@ -1946,6 +1950,8 @@ func readOnlyRevisionLabel(name, locale string) string {
 		return name + "（只读）"
 	case localization.Japanese:
 		return name + "（読み取り専用）"
+	case localization.Russian:
+		return name + " (только чтение)"
 	default:
 		return name + " (read-only)"
 	}
