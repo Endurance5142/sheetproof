@@ -52,7 +52,7 @@ for (const release of releases.releases) {
 }
 
 for (const [concept, translations] of Object.entries(glossary)) {
-  if (locales.some((locale) => !translations[locale])) fail(`glossary.${concept} does not contain all locales`);
+  if (productLocales.some((locale) => !translations[locale])) fail(`glossary.${concept} does not contain all locales`);
   if (Object.values(translations).some((value) => !value)) fail(`glossary.${concept} has an empty translation`);
 }
 
