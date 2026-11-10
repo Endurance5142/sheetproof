@@ -170,7 +170,7 @@ func leftSheets(text demoText) []sheetData {
 
 func rightSheets(text demoText) []sheetData {
 	sheets := leftSheets(text)
-	sheets[0].rows[1][2] = map[localization.Locale]string{localization.English: "Gareth the Bulwark", localization.SimplifiedChinese: "铁壁·洛恩", localization.Japanese: "鉄壁のガレス"}[localeForText(text)]
+	sheets[0].rows[1][2] = map[localization.Locale]string{localization.English: "Gareth the Bulwark", localization.SimplifiedChinese: "铁壁·洛恩", localization.Japanese: "鉄壁のガレス", localization.Russian: "Гарет-стеностоятель"}[localeForText(text)]
 	sheets[0].rows[1][4] = 1360
 	sheets[0].rows[2][5] = 150
 	sheets[0].rows[3][9] = 3
@@ -194,6 +194,8 @@ func localeForText(text demoText) localization.Locale {
 		return localization.SimplifiedChinese
 	case "キャラクター成長":
 		return localization.Japanese
+	case "Рост персонажа":
+		return localization.Russian
 	default:
 		return localization.English
 	}
