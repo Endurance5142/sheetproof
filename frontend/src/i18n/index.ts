@@ -2,13 +2,14 @@ import { computed, readonly, ref } from "vue";
 import { en } from "./messages/en";
 import { ja } from "./messages/ja";
 import { zhCN } from "./messages/zh-CN";
+import { ru } from "./messages/ru";
 import { detectSystemLocale } from "./detectLocale";
 import { DEFAULT_LOCALE, isLocalePreference, type Locale, type LocalePreference } from "./locale";
 import type { MessageParams, MessageValue } from "./locale";
 
 export type MessageKey = keyof typeof en;
 
-const messages: Record<Locale, Record<MessageKey, MessageValue>> = { en, "zh-CN": zhCN, ja };
+const messages: Record<Locale, Record<MessageKey, MessageValue>> = { en, "zh-CN": zhCN, ja, ru };
 const currentLocale = ref<Locale>(DEFAULT_LOCALE);
 const currentPreference = ref<LocalePreference>("system");
 
@@ -36,7 +37,7 @@ export function useI18n() {
   return {
     locale: readonly(currentLocale),
     preference: readonly(currentPreference),
-    languageName: computed(() => ({ en: "English", "zh-CN": "简体中文", ja: "日本語" }[currentLocale.value])),
+    languageName: computed(() => ({ en: "English", "zh-CN": "简体中文", ja: "日本語", ru: "Русский" }[currentLocale.value])),
     t,
     setLocalePreference
   };

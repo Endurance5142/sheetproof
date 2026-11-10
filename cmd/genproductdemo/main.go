@@ -29,8 +29,8 @@ type demoText struct {
 
 func main() {
 	dir := flag.String("dir", filepath.Join("build", "showcase", "AetherFront", "configs"), "base output directory")
-	localeFlag := flag.String("locale", "en", "demo locale: en, zh-CN, or ja")
-	allLocales := flag.Bool("all-locales", false, "generate en, zh-CN, and ja demos")
+	localeFlag := flag.String("locale", "en", "demo locale: en, zh-CN, ja, or ru")
+	allLocales := flag.Bool("all-locales", false, "generate en, zh-CN, ja, and ru demos")
 	flag.Parse()
 
 	locales := []localization.Locale{}

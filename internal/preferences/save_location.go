@@ -27,12 +27,12 @@ type savePreferences struct {
 	RepositoryIndexes  map[string]map[string]repositoryIndexRecord `json:"repositoryIndexes,omitempty"`
 }
 
-// LanguagePreference returns system, en, zh-CN, or ja. Older preferences
+// LanguagePreference returns system, en, zh-CN, ja, or ru. Older preferences
 // without the field continue to follow the operating-system locale.
 func (s Store) LanguagePreference() string {
 	value := s.load().LanguagePreference
 	switch value {
-	case "en", "zh-CN", "ja", "system":
+	case "en", "zh-CN", "ja", "ru", "system":
 		return value
 	default:
 		return "system"
@@ -41,7 +41,7 @@ func (s Store) LanguagePreference() string {
 
 func (s Store) RecordLanguagePreference(preference string) error {
 	switch preference {
-	case "en", "zh-CN", "ja", "system":
+	case "en", "zh-CN", "ja", "ru", "system":
 	default:
 		return fmt.Errorf("unsupported language preference %q", preference)
 	}

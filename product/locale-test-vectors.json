@@ -8,6 +8,8 @@
   { "input": "zh-SG", "expected": "zh-CN" },
   { "input": "ja", "expected": "ja" },
   { "input": "ja-JP", "expected": "ja" },
+  { "input": "ru", "expected": "ru" },
+  { "input": "ru-RU", "expected": "ru" },
   { "input": "zh-TW", "expected": "en" },
   { "input": "zh-HK", "expected": "en" },
   { "input": "zh-MO", "expected": "en" },

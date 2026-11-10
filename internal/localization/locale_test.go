@@ -7,6 +7,7 @@ func TestNormalize(t *testing.T) {
 		"en": English, "en-US": English, "en-GB": English,
 		"zh": SimplifiedChinese, "zh-CN": SimplifiedChinese, "zh-Hans": SimplifiedChinese, "zh-SG": SimplifiedChinese,
 		"ja": Japanese, "ja-JP": Japanese,
+		"ru": Russian, "ru-RU": Russian,
 		"zh-TW": English, "zh-HK": English, "zh-MO": English, "zh-Hant": English,
 		"fr-FR": English, "": English,
 	}

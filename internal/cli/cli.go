@@ -535,7 +535,7 @@ func parseLanguage(args []string) ([]string, localization.Locale, bool, error) {
 		switch {
 		case argument == "--lang":
 			if index+1 >= len(args) {
-				return nil, locale, explicit, errors.New("--lang requires en, zh-CN, or ja")
+				return nil, locale, explicit, errors.New("--lang requires en, zh-CN, ja, or ru")
 			}
 			index++
 			value = args[index]
@@ -566,9 +566,9 @@ func cliMessage(locale localization.Locale, key string) string {
 			"usage": `SheetProof - review and apply changes in Excel .xlsx workbooks
 
 Usage:
-  sheetproof compare [--lang en|zh-CN|ja] [--left FILE --right FILE] [--title TEXT] [--left-label TEXT] [--right-label TEXT] [--readonly-left] [--output FILE]
-  sheetproof repo [--lang en|zh-CN|ja] --path DIRECTORY [--file RELATIVE.xlsx] [--ref BRANCH]
-  sheetproof diff [--lang en|zh-CN|ja] --left FILE --right FILE [--format json|text]
+  sheetproof compare [--lang en|zh-CN|ja|ru] [--left FILE --right FILE] [--title TEXT] [--left-label TEXT] [--right-label TEXT] [--readonly-left] [--output FILE]
+  sheetproof repo [--lang en|zh-CN|ja|ru] --path DIRECTORY [--file RELATIVE.xlsx] [--ref BRANCH]
+  sheetproof diff [--lang en|zh-CN|ja|ru] --left FILE --right FILE [--format json|text]
   sheetproof`,
 		},
 		localization.SimplifiedChinese: {
@@ -580,9 +580,9 @@ Usage:
 			"usage": `SheetProof - 审阅并应用 Excel .xlsx 工作簿修改
 
 用法：
-  sheetproof compare [--lang en|zh-CN|ja] [--left 文件 --right 文件] [选项]
-  sheetproof repo [--lang en|zh-CN|ja] --path 目录 [--file 相对路径.xlsx] [--ref 引用]
-  sheetproof diff [--lang en|zh-CN|ja] --left 文件 --right 文件 [--format json|text]
+  sheetproof compare [--lang en|zh-CN|ja|ru] [--left 文件 --right 文件] [选项]
+  sheetproof repo [--lang en|zh-CN|ja|ru] --path 目录 [--file 相对路径.xlsx] [--ref 引用]
+  sheetproof diff [--lang en|zh-CN|ja|ru] --left 文件 --right 文件 [--format json|text]
   sheetproof`,
 		},
 		localization.Japanese: {
@@ -594,9 +594,23 @@ Usage:
 			"usage": `SheetProof - Excel .xlsx ブックの差分確認と反映
 
 使用方法：
-  sheetproof compare [--lang en|zh-CN|ja] [--left ファイル --right ファイル] [オプション]
-  sheetproof repo [--lang en|zh-CN|ja] --path ディレクトリ [--file 相対パス.xlsx] [--ref 参照]
-  sheetproof diff [--lang en|zh-CN|ja] --left ファイル --right ファイル [--format json|text]
+  sheetproof compare [--lang en|zh-CN|ja|ru] [--left ファイル --right ファイル] [オプション]
+  sheetproof repo [--lang en|zh-CN|ja|ru] --path ディレクトリ [--file 相対パス.xlsx] [--ref 参照]
+  sheetproof diff [--lang en|zh-CN|ja|ru] --left ファイル --right ファイル [--format json|text]
+  sheetproof`,
+		},
+		localization.Russian: {
+			"unknownCommand":        "неизвестная команда %q\n",
+			"diffSummary":           "слева: %s\nсправа: %s\nравны: %t\nлистов: %d, листов с различиями: %d, различий в ячейках: %d\n",
+			"repositoryFileMissing": "в репозитории нет запрошенного файла XLSX: %s\n",
+			"ugitListReadFailed":    "не удалось прочитать список файлов различий UGit: %v\n",
+			"ugitListNeedsTwo":      "список файлов различий UGit должен содержать ровно два пути к XLSX",
+			"usage": `SheetProof - просмотр и применение изменений в книгах Excel .xlsx
+
+Использование:
+  sheetproof compare [--lang en|zh-CN|ja|ru] [--left ФАЙЛ --right ФАЙЛ] [--title ТЕКСТ] [--left-label ТЕКСТ] [--right-label ТЕКСТ] [--readonly-left] [--output ФАЙЛ]
+  sheetproof repo [--lang en|zh-CN|ja|ru] --path КАТАЛОГ [--file ОТНОСИТЕЛЬНЫЙ.xlsx] [--ref ВЕТКА]
+  sheetproof diff [--lang en|zh-CN|ja|ru] --left ФАЙЛ --right ФАЙЛ [--format json|text]
   sheetproof`,
 		},
 	}

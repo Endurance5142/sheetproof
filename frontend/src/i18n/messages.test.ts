@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { en } from "./messages/en";
 import { zhCN } from "./messages/zh-CN";
 import { ja } from "./messages/ja";
+import { ru } from "./messages/ru";
 
-const catalogs = { en, "zh-CN": zhCN, ja } as const;
+const catalogs = { en, "zh-CN": zhCN, ja, ru } as const;
 
 describe("desktop message catalogs", () => {
   it("keeps exactly the same semantic keys in every locale", () => {
@@ -20,6 +21,7 @@ describe("desktop message catalogs", () => {
     }
     expect(zhCN["welcome.title"]).toContain("仓库");
     expect(ja["welcome.title"]).toContain("リポジトリ");
+    expect(ru["welcome.title"]).toContain("репозитори");
   });
 
   it("uses locale-aware complete templates for dynamic quantities", () => {
@@ -27,5 +29,6 @@ describe("desktop message catalogs", () => {
     expect(en["toolbar.copyCellsToLeft"]({ count: 3 })).toBe("Copy left (3)");
     expect(zhCN["toolbar.copyCellsToLeft"]({ count: 3 })).toBe("复制到左侧（3）");
     expect(ja["toolbar.copyCellsToLeft"]({ count: 3 })).toBe("左側へ反映（3）");
+    expect(ru["toolbar.copyCellsToLeft"]({ count: 3 })).toBe("Применить слева (3)");
   });
 });

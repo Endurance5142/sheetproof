@@ -9,11 +9,12 @@ const emit = defineEmits<{ (event: "close"): void }>();
 const { locale, t } = useI18n();
 const dialog = ref<HTMLElement | null>(null);
 
-const guideURL = computed(() => ({
+const guideURLs: Record<string, string> = {
   en: "https://sheetproof.luyilabs.com/guide/",
   "zh-CN": "https://sheetproof.luyilabs.com/zh-CN/guide/",
   ja: "https://sheetproof.luyilabs.com/ja/guide/"
-}[locale.value]));
+};
+const guideURL = computed(() => guideURLs[locale.value] ?? guideURLs.en);
 
 const shortcutGroups = [
   {
