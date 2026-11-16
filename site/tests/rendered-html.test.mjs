@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const routeList = ["/", "/features", "/guide", "/download", "/changelog", "/zh-CN", "/zh-CN/features", "/zh-CN/guide", "/zh-CN/download", "/zh-CN/changelog", "/ja", "/ja/features", "/ja/guide", "/ja/download", "/ja/changelog"];
+const routeList = ["/", "/features", "/guide", "/download", "/changelog", "/zh-CN", "/zh-CN/features", "/zh-CN/guide", "/zh-CN/download", "/zh-CN/changelog", "/ja", "/ja/features", "/ja/guide", "/ja/download", "/ja/changelog", "/ru", "/ru/features", "/ru/guide", "/ru/download", "/ru/changelog"];
 const routes = new Map(routeList.map((route) => [route, `../dist/client${route === "/" ? "" : route}/index.html`]));
 
 async function render(path = "/") {
@@ -13,7 +13,7 @@ async function render(path = "/") {
 }
 
 test("exports localized home pages with independent product copy", async () => {
-  const [en, zh, ja] = await Promise.all([render(), render("/zh-CN"), render("/ja")]);
+  const [en, zh, ja, ru] = await Promise.all([render(), render("/zh-CN"), render("/ja"), render("/ru")]);
   assert.match(en, /Review XLSX changes/);
   assert.match(en, /in Git—then apply/);
   assert.equal([...en.matchAll(/class="hero-title-line"/g)].length, 3);
@@ -26,6 +26,11 @@ test("exports localized home pages with independent product copy", async () => {
   assert.match(ja, /承認した変更だけを反映。/);
   assert.equal([...ja.matchAll(/class="hero-title-line"/g)].length, 2);
   assert.match(ja, /キー：マップ ID/);
+  assert.match(ru, /Изменения XLSX в Git — просматривайте/);
+  assert.match(ru, /и применяйте только одобренное\./);
+  assert.equal([...ru.matchAll(/class="hero-title-line"/g)].length, 2);
+  assert.match(ru, /Ключ: ID карты/);
+  assert.match(ru, /просматривайте(?:<!-- -->)? <\/span>/);
   assert.doesNotMatch(`${en}\n${ja}`, /让 Git 中的 XLSX|主键：地图ID/);
 });
 
@@ -34,6 +39,7 @@ test("exports localized feature, guide, download, and changelog pages", async ()
     ["/features", /Review, apply, and save XLSX changes from Git/], ["/guide", /Review and apply changes in three steps/], ["/download", /Windows preview/], ["/changelog", /Release notes/],
     ["/zh-CN/features", /比较、应用并保存 Git 中的 XLSX 修改/], ["/zh-CN/guide", /三步完成差异审阅/], ["/zh-CN/download", /Windows 预览版/], ["/zh-CN/changelog", /更新日志/],
     ["/ja/features", /Git 上の XLSX を比較し、必要な変更だけを保存/], ["/ja/guide", /3 ステップで差分を確認/], ["/ja/download", /Windows プレビュー/], ["/ja/changelog", /リリースノート/],
+    ["/ru/features", /Просмотр, применение и сохранение изменений XLSX из Git/], ["/ru/guide", /Просмотр и применение изменений в три шага/], ["/ru/download", /Предварительная версия для Windows/], ["/ru/changelog", /Примечания к выпускам/],
   ];
   for (const [route, pattern] of expected) assert.match(await render(route), pattern, route);
 });
@@ -42,14 +48,16 @@ test("static exports use the correct document language", async () => {
   assert.match(await render(), /<html lang="en">/);
   assert.match(await render("/zh-CN"), /<html lang="zh-CN">/);
   assert.match(await render("/ja"), /<html lang="ja">/);
+  assert.match(await render("/ru"), /<html lang="ru">/);
 });
 
 test("download copy explains unsigned first launch before optional verification in every locale", async () => {
-  const [en, zh, ja] = await Promise.all([render("/download"), render("/zh-CN/download"), render("/ja/download")]);
+  const [en, zh, ja, ru] = await Promise.all([render("/download"), render("/zh-CN/download"), render("/ja/download"), render("/ru/download")]);
   assert.match(en, /unsigned/); assert.match(en, /More info/); assert.match(en, /Run anyway/); assert.match(en, /Open Anyway/);
   assert.match(zh, /未签名/); assert.match(zh, /更多信息/); assert.match(zh, /仍要运行/); assert.match(zh, /仍要打开/);
   assert.match(ja, /未署名/); assert.match(ja, /詳細情報/); assert.match(ja, /このまま開く/);
-  for (const html of [en, zh, ja]) {
+  assert.match(ru, /неподписанной предварительной верси/); assert.match(ru, /Подробнее/); assert.match(ru, /Выполнить в любом случае/); assert.match(ru, /Открыть в любом случае/);
+  for (const html of [en, zh, ja, ru]) {
     assert.match(html, /Smart App Control/);
     assert.match(html, /Gatekeeper/);
     assert.match(html, /SHA256SUMS\.txt/);
@@ -59,10 +67,11 @@ test("download copy explains unsigned first launch before optional verification 
   assert.ok(en.indexOf("Run anyway") < en.indexOf("Optional download verification"));
   assert.ok(zh.indexOf("仍要运行") < zh.indexOf("下载文件校验（可选）"));
   assert.ok(ja.indexOf("このまま開く") < ja.indexOf("ダウンロードファイルの確認（任意）"));
+  assert.ok(ru.indexOf("Выполнить в любом случае") < ru.indexOf("Необязательная проверка скачивания"));
 });
 
 test("feature pages preserve the 90, 16, and 15 difference scenario", async () => {
-  for (const route of ["/features", "/zh-CN/features", "/ja/features"]) {
+  for (const route of ["/features", "/zh-CN/features", "/ja/features", "/ru/features"]) {
     const html = await render(route);
     assert.match(html, /90/); assert.match(html, /16/); assert.match(html, /15/);
     assert.match(html, /physical-rows\.png/); assert.match(html, /key-alignment\.png/); assert.match(html, /merge-result\.png/);
@@ -70,47 +79,53 @@ test("feature pages preserve the 90, 16, and 15 difference scenario", async () =
 });
 
 test("guide documents actual shortcuts, the in-app Help entry, and UGit entries", async () => {
-  for (const route of ["/guide", "/zh-CN/guide", "/ja/guide"]) {
+  for (const route of ["/guide", "/zh-CN/guide", "/ja/guide", "/ru/guide"]) {
     const html = await render(route);
     assert.match(html, /1(?:–|～)4/); assert.match(html, /5/); assert.match(html, /SpreadsheetCompare/); assert.match(html, /Custom/);
     assert.match(html, /Ctrl \/ ⌘ \+ Shift \+ S/);
     assert.match(html, /Ctrl \/ ⌘ \+ F/); assert.match(html, /F3/); assert.match(html, /Shift \+ F3/);
     assert.match(html, /Ctrl \/ ⌘ \+ C/); assert.match(html, /Ctrl \/ ⌘ \+ V \/ X/);
-    assert.match(html, /Arrow keys|方向键|矢印キー/);
-    assert.match(html, /mouse wheel|鼠标滚轮|マウスホイール/);
-    assert.match(html, /Help|帮助|ヘルプ/);
+    assert.match(html, /Arrow keys|方向键|矢印キー|Клавиши со стрелками/);
+    assert.match(html, /mouse wheel|鼠标滚轮|マウスホイール|колесо мыши/);
+    assert.match(html, /Help|帮助|ヘルプ|Справка/);
   }
 });
 
 test("v0.8 feature and guide pages cover the complete desktop workflow", async () => {
-  const [featureEn, featureZh, featureJa, guideEn, guideZh, guideJa] = await Promise.all([
-    render("/features"), render("/zh-CN/features"), render("/ja/features"),
-    render("/guide"), render("/zh-CN/guide"), render("/ja/guide"),
+  const [featureEn, featureZh, featureJa, featureRu, guideEn, guideZh, guideJa, guideRu] = await Promise.all([
+    render("/features"), render("/zh-CN/features"), render("/ja/features"), render("/ru/features"),
+    render("/guide"), render("/zh-CN/guide"), render("/ja/guide"), render("/ru/guide"),
   ]);
   assert.match(featureEn, /Pin any selected rows/); assert.match(featureEn, /UI text size and per-sheet zoom/); assert.match(featureEn, /paste and cut only on the left/);
   assert.match(featureZh, /任意选中的行固定在上方/); assert.match(featureZh, /UI 字体和每个 Sheet 的缩放/); assert.match(featureZh, /粘贴和剪切仅限左侧/);
   assert.match(featureJa, /選択した行を上部/); assert.match(featureJa, /UI の文字サイズとシートごとのズーム/); assert.match(featureJa, /貼り付けと切り取りは左側のみ/);
+  assert.match(featureRu, /Закрепляйте выбранные строки сверху/); assert.match(featureRu, /масштаб каждого листа/); assert.match(featureRu, /вставка и вырезание только слева/);
   assert.match(guideEn, /right-click selected row or column headers/); assert.match(guideEn, /default spreadsheet app/);
   assert.match(guideZh, /右键所选行头或列头/); assert.match(guideZh, /默认表格工具/);
   assert.match(guideJa, /行見出しまたは列見出しを右クリック/); assert.match(guideJa, /既定の表計算アプリ/);
+  assert.match(guideRu, /заголовки строк или столбцов правой кнопкой мыши/); assert.match(guideRu, /приложении таблиц по умолчанию/);
 });
 
 test("localized changelogs include v0.8, column alignment, whole-column copy, and in-app Help", async () => {
-  const [en, zh, ja] = await Promise.all([render("/changelog"), render("/zh-CN/changelog"), render("/ja/changelog")]);
-  for (const html of [en, zh, ja]) assert.match(html, /v0\.8\.0/);
-  assert.match(en, /unexpected exit/); assert.match(zh, /无操作闪退/); assert.match(ja, /予期せず終了/);
+  const [en, zh, ja, ru] = await Promise.all([render("/changelog"), render("/zh-CN/changelog"), render("/ja/changelog"), render("/ru/changelog")]);
+  for (const html of [en, zh, ja, ru]) assert.match(html, /v0\.8\.0/);
+  assert.match(en, /unexpected exit/); assert.match(zh, /无操作闪退/); assert.match(ja, /予期せず終了/); assert.match(ru, /неожиданное завершение работы/);
   assert.match(en, /Column-aware comparison and merging/); assert.match(en, /complete columns/);
   assert.match(zh, /按列语义对比与合并/); assert.match(zh, /整列复制/);
   assert.match(ja, /列を対応付けた比較と反映/); assert.match(ja, /列全体/);
+  assert.match(ru, /Сравнение и объединение с учётом столбцов/); assert.match(ru, /целых столбцов/);
   assert.match(en, /In-app help/);
   assert.match(zh, /应用内帮助/);
   assert.match(ja, /アプリ内ヘルプ/);
+  assert.match(ru, /Справка в приложении/);
   assert.match(en, /Switching between Settings and mouse-wheel worksheet zoom/);
   assert.match(zh, /在设置和主界面滚轮之间切换表格缩放/);
   assert.match(ja, /設定とメイングリッドのホイール操作を切り替えても/);
+  assert.match(ru, /Переключение между масштабом листа в настройках и масштабом колесом мыши/);
   assert.match(en, /Local rolling diagnostic logs/);
   assert.match(zh, /本地轮转诊断日志/);
   assert.match(ja, /ローカル診断ログ/);
+  assert.match(ru, /Локальные ротируемые диагностические журналы/);
 });
 
 test("public page copy does not describe AI or generated implementation", async () => {

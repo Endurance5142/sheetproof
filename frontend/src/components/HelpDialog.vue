@@ -12,7 +12,8 @@ const dialog = ref<HTMLElement | null>(null);
 const guideURLs: Record<string, string> = {
   en: "https://sheetproof.luyilabs.com/guide/",
   "zh-CN": "https://sheetproof.luyilabs.com/zh-CN/guide/",
-  ja: "https://sheetproof.luyilabs.com/ja/guide/"
+  ja: "https://sheetproof.luyilabs.com/ja/guide/",
+  ru: "https://sheetproof.luyilabs.com/ru/guide/"
 };
 const guideURL = computed(() => guideURLs[locale.value] ?? guideURLs.en);
 

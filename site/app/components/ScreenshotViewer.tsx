@@ -8,6 +8,7 @@ const viewerCopy = {
   en: { open: "Open and zoom", view: "View full size", desktop: "Wheel to zoom · Drag to pan", mobile: "Pinch to zoom · Drag to pan", controls: "Image zoom controls", out: "Zoom out", reset: "Reset image scale", in: "Zoom in", close: "Close full-size image", closeText: "Close", dialog: "Full-size screenshot" },
   "zh-CN": { open: "单独查看并缩放", view: "查看大图", desktop: "滚轮缩放 · 拖动查看", mobile: "双指缩放 · 拖动查看", controls: "图片缩放控制", out: "缩小图片", reset: "恢复图片原始比例", in: "放大图片", close: "关闭大图", closeText: "关闭", dialog: "大图查看器" },
   ja: { open: "単独で表示して拡大", view: "大きく表示", desktop: "ホイールで拡大 · ドラッグで移動", mobile: "ピンチで拡大 · ドラッグで移動", controls: "画像の拡大操作", out: "縮小", reset: "元の倍率に戻す", in: "拡大", close: "拡大画像を閉じる", closeText: "閉じる", dialog: "スクリーンショット拡大表示" },
+  ru: { open: "Открыть отдельно и увеличить", view: "Открыть в полном размере", desktop: "Колесо для масштаба · перетаскивание для просмотра", mobile: "Масштаб щипком · перетаскивание для просмотра", controls: "Управление масштабом изображения", out: "Уменьшить изображение", reset: "Восстановить исходный масштаб", in: "Увеличить изображение", close: "Закрыть изображение в полном размере", closeText: "Закрыть", dialog: "Просмотр скриншота в полном размере" },
 } as const;
 
 type ScreenshotViewerProps = {

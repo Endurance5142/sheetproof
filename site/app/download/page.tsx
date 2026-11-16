@@ -15,7 +15,7 @@ const macChecksumCommand = "shasum -a 256 SheetProof-macos-universal.zip";
 export default function DownloadPage({ locale = "en" }: { locale?: Locale }) {
   const copy = pageCopy.download[locale];
   return <SiteShell locale={locale} semanticPath="/download"><main>
-    <PageIntro eyebrow={copy.intro[0]} title={copy.intro[1]} description={copy.intro[2]} aside={<><strong>{product.version}</strong><span>{locale === "en" ? "Preview" : locale === "ja" ? "プレビュー" : "预览版"}</span><small>Windows / macOS</small></>} />
+    <PageIntro eyebrow={copy.intro[0]} title={copy.intro[1]} description={copy.intro[2]} aside={<><strong>{product.version}</strong><span>{locale === "en" ? "Preview" : locale === "ja" ? "プレビュー" : locale === "ru" ? "Предварительная версия" : "预览版"}</span><small>Windows / macOS</small></>} />
     <section className="section page-width download-platform-grid">
       <article className="download-card primary-card"><div className="download-card-top"><span className="platform">WINDOWS AMD64</span><span>{copy.windows[0]}</span></div><h2>{copy.windows[1]}</h2><p>{copy.windows[2]}</p><a className="button button-primary" href={downloads.windows}>{copy.windows[3]}</a><small>SheetProof-windows-amd64.exe · v{product.version}</small></article>
       <article className="download-card primary-card"><div className="download-card-top"><span className="platform">MACOS UNIVERSAL</span><span>{copy.mac[0]}</span></div><h2>{copy.mac[1]}</h2><p>{copy.mac[2]}</p><a className="button button-primary" href={downloads.macos}>{copy.mac[3]}</a><small>SheetProof-macos-universal.zip · v{product.version}</small></article>
