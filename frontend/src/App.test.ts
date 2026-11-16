@@ -568,8 +568,7 @@ describe("App", () => {
     const expected = {
       en: ["Help", "Open the online guide", "https://sheetproof.luyilabs.com/guide/"],
       "zh-CN": ["帮助", "打开官网使用说明", "https://sheetproof.luyilabs.com/zh-CN/guide/"],
-      ja: ["ヘルプ", "公式ガイドを開く", "https://sheetproof.luyilabs.com/ja/guide/"],
-      ru: ["Справка", "Открыть онлайн-руководство", "https://sheetproof.luyilabs.com/ru/guide/"]
+      ja: ["ヘルプ", "公式ガイドを開く", "https://sheetproof.luyilabs.com/ja/guide/"]
     } as const;
     for (const [locale, [title, button, url]] of Object.entries(expected)) {
       const controller = window.go!.main!.Controller!;

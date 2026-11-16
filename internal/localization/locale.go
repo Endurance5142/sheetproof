@@ -12,11 +12,10 @@ const (
 	English           Locale = "en"
 	SimplifiedChinese Locale = "zh-CN"
 	Japanese          Locale = "ja"
-	Russian           Locale = "ru"
 	DefaultLocale            = English
 )
 
-var SupportedLocales = []Locale{English, SimplifiedChinese, Japanese, Russian}
+var SupportedLocales = []Locale{English, SimplifiedChinese, Japanese}
 
 func Normalize(value string) Locale {
 	normalized := strings.ToLower(strings.ReplaceAll(strings.TrimSpace(value), "_", "-"))
@@ -31,8 +30,6 @@ func Normalize(value string) Locale {
 		return English
 	case normalized == "ja" || strings.HasPrefix(normalized, "ja-"):
 		return Japanese
-	case normalized == "ru" || strings.HasPrefix(normalized, "ru-"):
-		return Russian
 	case normalized == "zh", normalized == "zh-cn", strings.HasPrefix(normalized, "zh-cn-"),
 		normalized == "zh-hans", strings.HasPrefix(normalized, "zh-hans-"),
 		normalized == "zh-sg", strings.HasPrefix(normalized, "zh-sg-"):
@@ -46,7 +43,7 @@ func Parse(value string) (Locale, error) {
 	trimmed := strings.TrimSpace(value)
 	locale := Normalize(trimmed)
 	if trimmed == "" || (locale == DefaultLocale && !strings.EqualFold(trimmed, "en") && !strings.HasPrefix(strings.ToLower(trimmed), "en-")) {
-		return "", fmt.Errorf("unsupported language %q; expected en, zh-CN, ja, or ru", value)
+		return "", fmt.Errorf("unsupported language %q; expected en, zh-CN, or ja", value)
 	}
 	return locale, nil
 }
@@ -66,8 +63,6 @@ func Name(locale Locale) string {
 		return "简体中文"
 	case Japanese:
 		return "日本語"
-	case Russian:
-		return "Русский"
 	default:
 		return "English"
 	}

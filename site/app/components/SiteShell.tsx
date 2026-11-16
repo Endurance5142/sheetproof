@@ -48,7 +48,7 @@ export function SiteShell({ children, locale = "en", semanticPath = "/" }: { chi
       <div className="page-width nav-wrap">
         <Link className="site-brand" href={localizedPath(locale, "/")} aria-label={copy.home}>
           <img src="/brand/icon.svg" alt="" />
-          <span><strong>{product.name}</strong><small>{locale === "zh-CN" ? "表鉴" : locale === "ja" ? "XLSX レビュー" : locale === "ru" ? "Обзор XLSX" : "XLSX review"}</small></span>
+          <span><strong>{product.name}</strong><small>{locale === "zh-CN" ? "表鉴" : locale === "ja" ? "XLSX レビュー" : "XLSX review"}</small></span>
         </Link>
         <nav className="desktop-nav" aria-label={copy.nav}>
           {nav.map(([label, href]) => <Link className={isCurrent(href) ? "is-current" : undefined} aria-current={isCurrent(href) ? "page" : undefined} key={href} href={localizedPath(locale, href)}>{label}</Link>)}

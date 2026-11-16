@@ -1,6 +1,6 @@
 <!-- Generated from product facts and locale content. Do not edit directly. -->
 
-English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [Русский](README.ru.md)
+English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 # SheetProof
 
@@ -33,7 +33,7 @@ SheetProof detects a shared `id` header or one unambiguous `*ID` header. You can
 - **In-app help**: Use Help in the desktop toolbar to view the current version, open the guide in the active language, and check keyboard shortcuts.
 - **Controlled merge and undo**: Write selected cells, rows, or complete right-side columns to the left, or remove left-only columns; every structural action remains undoable.
 - **Hold to compare before and after**: Hold Before/After or Tab in a grid to see the left workbook exactly as it was opened.
-- **English, Chinese, Japanese, and Russian**: Use the desktop app, CLI, documentation, website, and localized demonstration workbooks in English, Simplified Chinese, Japanese, or Russian.
+- **English, Chinese, and Japanese**: Use the desktop app, CLI, documentation, website, and localized demonstration workbooks in English, Simplified Chinese, or Japanese.
 - **Local Git repository mode**: Read the real worktree against a validated local or remote-tracking reference without checkout, fetch, or branch switching. A preselected workbook and revision finish loading before the workspace is shown.
 - **Guarded local saving**: Detect external changes, write a temporary file in the same directory, reopen it for validation, then replace the original atomically.
 
@@ -109,7 +109,7 @@ Place the app in a stable location, then use Configure UGit. SheetProof replaces
 
 ## CLI
 
-Text output follows `--lang en|zh-CN|ja|ru`; JSON keys and enum values remain language-independent.
+Text output follows `--lang en|zh-CN|ja`; JSON keys and enum values remain language-independent.
 
 ## Known limitations
 

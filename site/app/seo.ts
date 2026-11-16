@@ -5,7 +5,7 @@ import { localizedPath, type Locale } from "./i18n";
 
 export type PageId = "home" | "features" | "guide" | "download" | "changelog";
 const origin = generated.facts.product.website;
-const ogLocales: Record<Locale, string> = { en: "en_US", "zh-CN": "zh_CN", ja: "ja_JP", ru: "ru_RU" };
+const ogLocales: Record<Locale, string> = { en: "en_US", "zh-CN": "zh_CN", ja: "ja_JP" };
 
 export function pageMetadata(locale: Locale, page: PageId, semanticPath: string): Metadata {
   const seo = generated.locales[locale].seo[page];
@@ -14,7 +14,6 @@ export function pageMetadata(locale: Locale, page: PageId, semanticPath: string)
     en: new URL(localizedPath("en", semanticPath), origin).toString(),
     "zh-CN": new URL(localizedPath("zh-CN", semanticPath), origin).toString(),
     ja: new URL(localizedPath("ja", semanticPath), origin).toString(),
-    ru: new URL(localizedPath("ru", semanticPath), origin).toString(),
     "x-default": new URL(localizedPath("en", semanticPath), origin).toString(),
   };
   return {

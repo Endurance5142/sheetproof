@@ -4,15 +4,14 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const check = process.argv.includes("--check");
-const locales = ["en", "zh-CN", "ja", "ru"];
-const productLocales = locales;
+const locales = ["en", "zh-CN", "ja"];
 const generatedNotice = "Generated from product facts and locale content. Do not edit directly.";
 
 const readJSON = async (path) => JSON.parse(await readFile(resolve(root, path), "utf8"));
 const facts = await readJSON("product/product.json");
 const glossary = await readJSON("product/glossary.json");
 const releases = await readJSON("product/changelog/releases.json");
-const localeContent = Object.fromEntries(await Promise.all(productLocales.map(async (locale) => [locale, await readJSON(`product/locales/${locale}.json`)])));
+const localeContent = Object.fromEntries(await Promise.all(locales.map(async (locale) => [locale, await readJSON(`product/locales/${locale}.json`)])));
 const changelogContent = Object.fromEntries(await Promise.all(locales.map(async (locale) => [locale, await readJSON(`product/changelog/${locale}.json`)])));
 
 function fail(message) {
@@ -29,10 +28,8 @@ function compareShape(reference, candidate, label) {
   if (JSON.stringify(shape(reference)) !== JSON.stringify(shape(candidate))) fail(`${label} keys do not match English`);
 }
 
-for (const locale of productLocales.slice(1)) {
-  compareShape(localeContent.en, localeContent[locale], `product/locales/${locale}.json`);
-}
 for (const locale of locales.slice(1)) {
+  compareShape(localeContent.en, localeContent[locale], `product/locales/${locale}.json`);
   compareShape(changelogContent.en, changelogContent[locale], `product/changelog/${locale}.json`);
 }
 
@@ -52,8 +49,8 @@ for (const release of releases.releases) {
 }
 
 for (const [concept, translations] of Object.entries(glossary)) {
-  if (productLocales.some((locale) => !translations[locale])) fail(`glossary.${concept} does not contain all locales`);
-  if (Object.values(translations).some((value) => !value)) fail(`glossary.${concept} has an empty translation`);
+  if (JSON.stringify(Object.keys(translations).sort()) !== JSON.stringify([...locales].sort())) fail(`glossary.${concept} does not contain all locales`);
+  if (locales.some((locale) => !translations[locale])) fail(`glossary.${concept} has an empty translation`);
 }
 
 for (const locale of locales) {
@@ -71,7 +68,7 @@ function screenshotPath(locale, id) {
 }
 
 function languageNav(locale, kind) {
-  const names = { en: "English", "zh-CN": "简体中文", ja: "日本語", ru: "Русский" };
+  const names = { en: "English", "zh-CN": "简体中文", ja: "日本語" };
   const filename = (target) => `${kind}${target === "en" ? "" : `.${target}`}.md`;
   return locales.map((target) => target === locale ? names[target] : `[${names[target]}](${filename(target)})`).join(" | ");
 }
@@ -112,7 +109,7 @@ const readmeCommon = {
       checksumNote: "If the values do not match, do not run the file. Download it again from GitHub Releases."
     },
     screenshot: "Key-aligned character configuration comparison", caption: "The demo uses localized character growth, stage reward, and skill tuning workbooks.",
-    quickText: "Open a local Git repository, or choose two .xlsx workbooks. The left side is the only writable source; the right side is always read-only.", gitText: "Repository mode reads the real worktree on the left and a validated Git object on the right. It does not fetch, checkout, switch, stage, commit, or push.", filesText: "Use the welcome screen or run `sheetproof compare --left current.xlsx --right target.xlsx`.", ugitText: "Place the app in a stable location, then use Configure UGit. SheetProof replaces only *.xlsx diff and merge entries and verifies the result. Settings offers folder scanning: review and select repositories with older overrides, then confirm batch XLSX repairs without opening a repository. Other file types and wildcard tools are preserved.", cliText: "Text output follows `--lang en|zh-CN|ja|ru`; JSON keys and enum values remain language-independent.", limitsText: "Only .xlsx is supported; .xlsm is not supported. SheetProof is not an Excel-level editor and does not guarantee full fidelity for charts, images, pivot tables, external connections, or complex conditional formatting.", buildText: "Requires Go 1.24+, Node.js 20+, and Wails 2.10.2. On Windows use `powershell -ExecutionPolicy Bypass -File scripts/invoke-wails.ps1 build`. GitHub Release notes are generated from the English changelog and end with links to the Simplified Chinese and Japanese website changelogs.", licenseText: "MIT License. Copyright (c) 2026 tadazly."
+    quickText: "Open a local Git repository, or choose two .xlsx workbooks. The left side is the only writable source; the right side is always read-only.", gitText: "Repository mode reads the real worktree on the left and a validated Git object on the right. It does not fetch, checkout, switch, stage, commit, or push.", filesText: "Use the welcome screen or run `sheetproof compare --left current.xlsx --right target.xlsx`.", ugitText: "Place the app in a stable location, then use Configure UGit. SheetProof replaces only *.xlsx diff and merge entries and verifies the result. Settings offers folder scanning: review and select repositories with older overrides, then confirm batch XLSX repairs without opening a repository. Other file types and wildcard tools are preserved.", cliText: "Text output follows `--lang en|zh-CN|ja`; JSON keys and enum values remain language-independent.", limitsText: "Only .xlsx is supported; .xlsm is not supported. SheetProof is not an Excel-level editor and does not guarantee full fidelity for charts, images, pivot tables, external connections, or complex conditional formatting.", buildText: "Requires Go 1.24+, Node.js 20+, and Wails 2.10.2. On Windows use `powershell -ExecutionPolicy Bypass -File scripts/invoke-wails.ps1 build`. GitHub Release notes are generated from the English changelog and end with links to the Simplified Chinese and Japanese website changelogs.", licenseText: "MIT License. Copyright (c) 2026 tadazly."
   },
   "zh-CN": {
     title: "# SheetProof · 表鉴", why: "## 为什么需要 SheetProof", whyText: "XLSX 是压缩的 OOXML 包。文本 diff 容易把序列化噪声误判为工作簿变化，也无法在单元格上下文中选择性合并。SheetProof 读取工作簿语义，以同步双栏呈现，并由用户决定哪些内容进入左侧结果。",
@@ -137,7 +134,7 @@ const readmeCommon = {
       checksumNote: "如果两者不一致，请不要运行该文件，并重新从 GitHub Releases 下载。"
     },
     screenshot: "按主键对齐的角色配置表对比", caption: "演示使用本地化的角色成长、关卡掉落和技能参数工作簿。",
-    quickText: "打开本地 Git 仓库，或选择两个 .xlsx 工作簿。左侧是唯一可写来源，右侧始终只读。", gitText: "仓库模式左侧读取真实工作区，右侧读取经过校验的 Git 对象；不会 fetch、checkout、切换分支、暂存、提交或推送。", filesText: "可使用欢迎页，或运行 `sheetproof compare --left current.xlsx --right target.xlsx`。", ugitText: "把应用放在固定位置后使用“配置 UGit”。SheetProof 只替换 *.xlsx 差异与合并项，并在写入后校验。设置中的“扫描仓库目录并修复”：无需打开仓库即可在设置中扫描目录，勾选存在旧工具覆盖的仓库，确认后批量修复 XLSX 关联；保留其他文件类型和通用工具。", cliText: "文本输出遵循 `--lang en|zh-CN|ja|ru`；JSON 字段和枚举值保持语言无关。", limitsText: "只支持 .xlsx，不支持 .xlsm。SheetProof 不是 Excel 级编辑器，也不保证图表、图片、数据透视表、外部连接或复杂条件格式等高级对象能够完整保真。", buildText: "需要 Go 1.24+、Node.js 20+ 和 Wails 2.10.2。Windows 使用 `powershell -ExecutionPolicy Bypass -File scripts/invoke-wails.ps1 build`。GitHub Release 说明由英文更新日志自动生成，并在结尾链接简体中文和日文官网更新日志。", licenseText: "MIT License。Copyright (c) 2026 tadazly。"
+    quickText: "打开本地 Git 仓库，或选择两个 .xlsx 工作簿。左侧是唯一可写来源，右侧始终只读。", gitText: "仓库模式左侧读取真实工作区，右侧读取经过校验的 Git 对象；不会 fetch、checkout、切换分支、暂存、提交或推送。", filesText: "可使用欢迎页，或运行 `sheetproof compare --left current.xlsx --right target.xlsx`。", ugitText: "把应用放在固定位置后使用“配置 UGit”。SheetProof 只替换 *.xlsx 差异与合并项，并在写入后校验。设置中的“扫描仓库目录并修复”：无需打开仓库即可在设置中扫描目录，勾选存在旧工具覆盖的仓库，确认后批量修复 XLSX 关联；保留其他文件类型和通用工具。", cliText: "文本输出遵循 `--lang en|zh-CN|ja`；JSON 字段和枚举值保持语言无关。", limitsText: "只支持 .xlsx，不支持 .xlsm。SheetProof 不是 Excel 级编辑器，也不保证图表、图片、数据透视表、外部连接或复杂条件格式等高级对象能够完整保真。", buildText: "需要 Go 1.24+、Node.js 20+ 和 Wails 2.10.2。Windows 使用 `powershell -ExecutionPolicy Bypass -File scripts/invoke-wails.ps1 build`。GitHub Release 说明由英文更新日志自动生成，并在结尾链接简体中文和日文官网更新日志。", licenseText: "MIT License。Copyright (c) 2026 tadazly。"
   },
   ja: {
     title: "# SheetProof（シートプルーフ）", why: "## SheetProof が必要な理由", whyText: "XLSX は圧縮された OOXML パッケージです。テキスト diff では再保存による構造差を内容変更と誤認しやすく、セルを文脈の中で選択的に反映できません。SheetProof はブックの意味を同期した 2 ペインに表示し、左側へ取り込む内容をユーザーが決められるようにします。",
@@ -162,32 +159,7 @@ const readmeCommon = {
       checksumNote: "値が一致しない場合は実行せず、GitHub Releases からダウンロードし直してください。"
     },
     screenshot: "キーで対応付けたキャラクター設定表の比較", caption: "ローカライズしたキャラクター成長、ステージ報酬、スキル設定ブックを使用しています。",
-    quickText: "ローカル Git リポジトリを開くか、2 つの .xlsx ブックを選びます。書き込み可能なのは左側だけで、右側は常に読み取り専用です。", gitText: "左側は実際のワークツリー、右側は検証済み Git オブジェクトです。fetch、checkout、ブランチ切り替え、stage、commit、push は行いません。", filesText: "開始画面から選ぶか、`sheetproof compare --left current.xlsx --right target.xlsx` を実行します。", ugitText: "アプリを固定した場所へ置き、「UGit を設定」を実行します。*.xlsx の差分・マージ項目だけを置き換え、書き込み後に検証します。設定からフォルダーを検索し、古い設定があるリポジトリを選択・確認して XLSX の関連付けを一括修復できます。リポジトリを開く必要はなく、ほかの形式と汎用ツールは保持します。", cliText: "テキスト出力は `--lang en|zh-CN|ja|ru` に従います。JSON のキーと列挙値は翻訳しません。", limitsText: ".xlsx のみ対応し、.xlsm には対応していません。SheetProof は Excel 相当のエディターではなく、グラフ、画像、ピボットテーブル、外部接続、複雑な条件付き書式などの高度なオブジェクトを完全に保持することは保証しません。", buildText: "Go 1.24+、Node.js 20+、Wails 2.10.2 が必要です。Windows では `powershell -ExecutionPolicy Bypass -File scripts/invoke-wails.ps1 build` を使います。GitHub Release の本文は英語の変更履歴から自動生成し、末尾に簡体字中国語と日本語の公式サイト変更履歴へのリンクを追加します。", licenseText: "MIT License。Copyright (c) 2026 tadazly。"
-  },
-  ru: {
-    title: "# SheetProof", why: "## Зачем нужен SheetProof", whyText: "XLSX — сжатый OOXML-пакет. Текстовые сравнения принимают шум сериализации за изменения книги и не могут выборочно объединять ячейки с учётом контекста. SheetProof читает семантику книги в синхронные таблицы и оставляет за пользователем решение о том, что попадёт в левый результат.",
-    audience: "Для разработчиков и контентных команд, которые просматривают версионированные конфигурационные книги. Файлы обрабатываются локально, Excel не требуется.", keyHeading: "## Выравнивание по ключу", keyText: "SheetProof распознаёт общий заголовок `id` или единственный однозначный заголовок `*ID`. Ключевую колонку также можно выбрать из меню заголовка столбца. Записи с надёжным ключом выравниваются; неоднозначные записи откатываются к физическим строкам, не отключая выравнивание для остального листа. Односторонние записи остаются рядом с соседними общими записями.",
-    features: "## Текущие возможности", download: "## Загрузка", quick: "## Быстрый старт", git: "## Режим Git-репозитория", files: "## Режим двух файлов", ugit: "## UGit", cli: "## CLI", limits: "## Известные ограничения", build: "## Сборка", license: "## License",
-    install: {
-      heading: "## Первое открытие в Windows и macOS",
-      intro: "SheetProof сейчас является неподписанной предварительной версией, поэтому Windows и macOS могут показать предупреждение безопасности при первом открытии, потому что система не может проверить издателя. Само по себе это предупреждение не означает, что система обнаружила вредоносное ПО.",
-      safety: "Скачивайте SheetProof только из GitHub Releases этого проекта. Если система явно сообщает о вредоносном ПО или повреждённом файле, остановитесь и скачайте файл заново.",
-      windowsHeading: "### Windows",
-      windowsReason: "Текущий исполняемый файл не имеет кодовой подписи, поэтому Windows может определить его как нераспознанное приложение или показать неизвестного издателя.",
-      windowsSteps: ["Скачайте и дважды щёлкните `SheetProof-windows-amd64.exe`.", "Если Windows сообщает, что защитила ваш компьютер, выберите **Подробнее**.", "Выберите **Выполнить в любом случае**."],
-      windowsFallback: "Если **Выполнить в любом случае** недоступна, работу приложения может блокировать Smart App Control или политика организации. Обратитесь к администратору; не отключайте средства безопасности Windows глобально только ради запуска SheetProof.",
-      macHeading: "### macOS",
-      macReason: "Текущее приложение не подписано Apple Developer ID и не проходило нотаризацию, поэтому Gatekeeper не может автоматически проверить разработчика или статус нотаризации.",
-      macSteps: ["Скачайте и распакуйте `SheetProof-macos-universal.zip`.", "Переместите `SheetProof.app` в **Программы**, затем дважды щёлкните его.", "Если macOS блокирует запуск, откройте **Системные настройки → Конфиденциальность и безопасность**.", "В разделе «Безопасность» найдите SheetProof, выберите **Открыть в любом случае**, пройдите проверку подлинности, затем выберите **Открыть**."],
-      macFallback: "Если **Открыть в любом случае** не видно, попробуйте открыть SheetProof ещё раз и вернитесь в «Конфиденциальность и безопасность». Управляемый Mac может требовать одобрения администратора.",
-      checksumHeading: "## Необязательная проверка скачивания",
-      checksumIntro: "Для дополнительной проверки целостности сравните скачанный файл с `SHA256SUMS.txt` из того же GitHub Release.",
-      checksumWindows: "(Get-FileHash .\\SheetProof-windows-amd64.exe -Algorithm SHA256).Hash",
-      checksumMac: "shasum -a 256 SheetProof-macos-universal.zip",
-      checksumNote: "Если значения не совпадают, не запускайте файл. Скачайте его заново из GitHub Releases."
-    },
-    screenshot: "Сравнение конфигурации персонажей с выравниванием по ключу", caption: "В демонстрации используются локализованные книги роста персонажа, наград за этапы и настройки навыков.",
-    quickText: "Откройте локальный Git-репозиторий или выберите две книги .xlsx. Левая сторона — единственный редактируемый источник; правая всегда только для чтения.", gitText: "Режим репозитория читает реальное рабочее дерево слева и проверенный объект Git справа. Он не выполняет fetch, checkout, переключение веток, staging, commit или push.", filesText: "Используйте экран приветствия или выполните `sheetproof compare --left current.xlsx --right target.xlsx`.", ugitText: "Разместите приложение в постоянном месте, затем используйте «Настройку UGit». SheetProof заменяет только записи diff и merge для *.xlsx и проверяет результат. В настройках доступно сканирование папок: просматривайте и выбирайте репозитории со старыми переопределениями инструментов, затем подтверждайте массовое восстановление ассоциаций XLSX без открытия репозитория. Другие типы файлов и инструменты с подстановочными масками сохраняются.", cliText: "Текстовый вывод следует за `--lang en|zh-CN|ja|ru`; ключи JSON и значения перечислений остаются независимыми от языка.", limitsText: "Поддерживается только .xlsx; .xlsm не поддерживается. SheetProof не является редактором уровня Excel и не гарантирует полной точности для диаграмм, изображений, сводных таблиц, внешних подключений или сложного условного форматирования.", buildText: "Требуются Go 1.24+, Node.js 20+ и Wails 2.10.2. В Windows используйте `powershell -ExecutionPolicy Bypass -File scripts/invoke-wails.ps1 build`. Примечания GitHub Release генерируются из английского списка изменений и завершаются ссылками на списки изменений сайта на упрощённом китайском и японском.", licenseText: "Лицензия MIT. Copyright (c) 2026 tadazly."
+    quickText: "ローカル Git リポジトリを開くか、2 つの .xlsx ブックを選びます。書き込み可能なのは左側だけで、右側は常に読み取り専用です。", gitText: "左側は実際のワークツリー、右側は検証済み Git オブジェクトです。fetch、checkout、ブランチ切り替え、stage、commit、push は行いません。", filesText: "開始画面から選ぶか、`sheetproof compare --left current.xlsx --right target.xlsx` を実行します。", ugitText: "アプリを固定した場所へ置き、「UGit を設定」を実行します。*.xlsx の差分・マージ項目だけを置き換え、書き込み後に検証します。設定からフォルダーを検索し、古い設定があるリポジトリを選択・確認して XLSX の関連付けを一括修復できます。リポジトリを開く必要はなく、ほかの形式と汎用ツールは保持します。", cliText: "テキスト出力は `--lang en|zh-CN|ja` に従います。JSON のキーと列挙値は翻訳しません。", limitsText: ".xlsx のみ対応し、.xlsm には対応していません。SheetProof は Excel 相当のエディターではなく、グラフ、画像、ピボットテーブル、外部接続、複雑な条件付き書式などの高度なオブジェクトを完全に保持することは保証しません。", buildText: "Go 1.24+、Node.js 20+、Wails 2.10.2 が必要です。Windows では `powershell -ExecutionPolicy Bypass -File scripts/invoke-wails.ps1 build` を使います。GitHub Release の本文は英語の変更履歴から自動生成し、末尾に簡体字中国語と日本語の公式サイト変更履歴へのリンクを追加します。", licenseText: "MIT License。Copyright (c) 2026 tadazly。"
   }
 };
 
@@ -200,8 +172,8 @@ function renderReadme(locale) {
 }
 
 function renderChangelog(locale) {
-  const intro = { en: "User-visible SheetProof changes.", "zh-CN": "SheetProof 的用户可见变化记录。", ja: "SheetProof のユーザー向け変更履歴です。", ru: "Видимые пользователю изменения SheetProof." }[locale];
-  const unreleased = { en: "Unreleased", "zh-CN": "未发布", ja: "未リリース", ru: "Не выпущено" }[locale];
+  const intro = { en: "User-visible SheetProof changes.", "zh-CN": "SheetProof 的用户可见变化记录。", ja: "SheetProof のユーザー向け変更履歴です。" }[locale];
+  const unreleased = { en: "Unreleased", "zh-CN": "未发布", ja: "未リリース" }[locale];
   const sections = releases.releases.map((release) => {
     const text = changelogContent[locale][release.version];
     const changes = release.changes.map((id) => `- ${text.changes[id]}`).join("\n");

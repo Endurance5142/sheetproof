@@ -29,8 +29,8 @@ type demoText struct {
 
 func main() {
 	dir := flag.String("dir", filepath.Join("build", "showcase", "AetherFront", "configs"), "base output directory")
-	localeFlag := flag.String("locale", "en", "demo locale: en, zh-CN, ja, or ru")
-	allLocales := flag.Bool("all-locales", false, "generate en, zh-CN, ja, and ru demos")
+	localeFlag := flag.String("locale", "en", "demo locale: en, zh-CN, or ja")
+	allLocales := flag.Bool("all-locales", false, "generate en, zh-CN, and ja demos")
 	flag.Parse()
 
 	locales := []localization.Locale{}
@@ -92,17 +92,6 @@ func demoContent(locale localization.Locale) demoText {
 			roles:           [6]string{"坦克", "游侠", "法师", "辅助", "战士", "刺客"},
 			stages:          [9]string{"雾林外围", "古树回廊", "荆棘守望者", "沉没遗迹", "回声穹顶", "无声构装体", "霜原前哨", "白夜峡谷", "凛冬巨像"},
 			skills:          [6]string{"壁垒冲击", "穿云箭", "星陨", "圣愈潮汐", "赤刃连斩", "霜环"},
-		}
-	case localization.Russian:
-		return demoText{
-			sheets: [3]string{"Рост персонажа", "Награды за этапы", "Настройка навыков"}, positionHeader: "Номер строки",
-			characterHeader: []any{"id", "role_key", "Отображаемое имя", "Роль", "Здоровье", "Атака", "Защита", "Шанс критического удара", "Скорость перемещения", "Уровень разблокировки", "Путь к ресурсу"},
-			stageHeader:     []any{"id", "stage_key", "Название этапа", "Затраты выносливости", "Золото", "Опыт", "Награда за первое прохождение", "Количество за первое прохождение", "Обычная добыча", "Вес добычи"},
-			skillHeader:     []any{"id", "skill_key", "Название навыка", "Коэффициент урона", "Перезарядка (сек)", "Затраты энергии", "Правила целей", "Путь к эффекту"},
-			characters:      [11]string{"Гарет", "Айла", "Нокс", "Мира", "Каэл", "Ивель", "Гром", "Сия", "Виктор", "Фрейя", "Илара"},
-			roles:           [6]string{"Танк", "Стрелок", "Маг", "Поддержка", "Воин", "Убийца"},
-			stages:          [9]string{"Окраина Туманного леса", "Проход Старого древа", "Терновый дозор", "Затонувшие руины", "Свод эха", "Безмолвный автоматон", "Форпост Морозного поля", "Ущелье Белой ночи", "Колосс зимней бури"},
-			skills:          [6]string{"Удар щита", "Пронзающая стрела", "Звездопад", "Священный прилив", "Багровая кромка", "Морозное кольцо"},
 		}
 	case localization.Japanese:
 		return demoText{
@@ -170,7 +159,7 @@ func leftSheets(text demoText) []sheetData {
 
 func rightSheets(text demoText) []sheetData {
 	sheets := leftSheets(text)
-	sheets[0].rows[1][2] = map[localization.Locale]string{localization.English: "Gareth the Bulwark", localization.SimplifiedChinese: "铁壁·洛恩", localization.Japanese: "鉄壁のガレス", localization.Russian: "Гарет-стеностоятель"}[localeForText(text)]
+	sheets[0].rows[1][2] = map[localization.Locale]string{localization.English: "Gareth the Bulwark", localization.SimplifiedChinese: "铁壁·洛恩", localization.Japanese: "鉄壁のガレス"}[localeForText(text)]
 	sheets[0].rows[1][4] = 1360
 	sheets[0].rows[2][5] = 150
 	sheets[0].rows[3][9] = 3
@@ -194,8 +183,6 @@ func localeForText(text demoText) localization.Locale {
 		return localization.SimplifiedChinese
 	case "キャラクター成長":
 		return localization.Japanese
-	case "Рост персонажа":
-		return localization.Russian
 	default:
 		return localization.English
 	}

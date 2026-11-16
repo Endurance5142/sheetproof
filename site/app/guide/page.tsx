@@ -32,6 +32,6 @@ export default function GuidePage({ locale = "en" }: { locale?: Locale }) {
       <ol className="ugit-setup-steps">{copy.ugit.slice(3).map((step, index) => <li key={step[0]}><span>{String(index + 1).padStart(2, "0")}</span><div><h3>{step[0]}</h3><p>{step[1]}</p></div></li>)}</ol>
       <div className="ugit-config-note"><strong>{copy.ugitNote[0]}</strong><p>{copy.ugitNote[1]}</p></div>
     </section>
-    <section className="section page-width faq-section"><div className="section-heading compact"><p className="eyebrow">FAQ</p><h2>{locale === "en" ? "Before you start" : locale === "ja" ? "よくある質問" : locale === "ru" ? "Частые вопросы" : "使用前常见问题"}</h2></div>{copy.faq.map((item, index) => <details open={index === 0} key={item[0]}><summary>{item[0]}</summary><p>{item[1]}</p></details>)}</section>
+    <section className="section page-width faq-section"><div className="section-heading compact"><p className="eyebrow">FAQ</p><h2>{locale === "en" ? "Before you start" : locale === "ja" ? "よくある質問" : "使用前常见问题"}</h2></div>{copy.faq.map((item, index) => <details open={index === 0} key={item[0]}><summary>{item[0]}</summary><p>{item[1]}</p></details>)}</section>
   </main></SiteShell>;
 }

@@ -161,7 +161,7 @@ func (c *Controller) startup(ctx context.Context) {
 				return fmt.Errorf("%s: %w", uiText(c.options.Locale,
 					"The most recently opened repository is unavailable",
 					"最近打开的仓库不可用",
-					"前回開いたリポジトリを利用できません", "Последний открытый репозиторий недоступен",
+					"前回開いたリポジトリを利用できません",
 				), err)
 			}
 			return err
@@ -338,7 +338,7 @@ func (c *Controller) ConfigureUGit() (UGitConfigurationResult, error) {
 			Message: uiText(locale,
 				"UGit's *.xlsx diff and merge tools already point to this app. No update is needed.",
 				"UGit 的 *.xlsx 差异与合并工具已指向当前应用，无需更新。",
-				"UGit の *.xlsx 差分・マージツールは、すでにこのアプリを参照しています。更新は不要です。", "Инструменты сравнения и слияния *.xlsx в UGit уже указывают на это приложение. Обновление не требуется.",
+				"UGit の *.xlsx 差分・マージツールは、すでにこのアプリを参照しています。更新は不要です。",
 			) + "\n" + ugitConfigurationContext(inspection, locale),
 		}, nil
 	}
@@ -346,7 +346,7 @@ func (c *Controller) ConfigureUGit() (UGitConfigurationResult, error) {
 		return UGitConfigurationResult{}, errors.New(uiText(locale,
 			"UGit configuration cannot be confirmed without the desktop interface.",
 			"无界面模式下无法确认修改 UGit 配置。",
-			"画面を表示しないモードでは、UGit 設定の変更を確認できません。", "Без настольного интерфейса невозможно подтвердить изменение настроек UGit.",
+			"画面を表示しないモードでは、UGit 設定の変更を確認できません。",
 		))
 	}
 
@@ -354,18 +354,18 @@ func (c *Controller) ConfigureUGit() (UGitConfigurationResult, error) {
 		uiText(locale,
 			"Set this app as UGit's diff and merge tool for *.xlsx files:\n%s\n\n%s\n\nOnly *.xlsx settings will change. Other file types are not affected.",
 			"将把当前应用设为 UGit 的 *.xlsx 差异与合并工具：\n%s\n\n%s\n\n只会替换 *.xlsx 相关配置，不影响其他文件类型。",
-			"このアプリを UGit の *.xlsx 差分・マージツールに設定します：\n%s\n\n%s\n\n変更するのは *.xlsx の設定だけです。ほかのファイル形式には影響しません。", "Это приложение будет назначено инструментом сравнения и слияния *.xlsx для UGit:\n%s\n\n%s\n\nИзменятся только настройки *.xlsx. Другие типы файлов не затрагиваются.",
+			"このアプリを UGit の *.xlsx 差分・マージツールに設定します：\n%s\n\n%s\n\n変更するのは *.xlsx の設定だけです。ほかのファイル形式には影響しません。",
 		),
 		executablePath, ugitConfigurationContext(inspection, locale),
 	)
 	if inspection.NeedsUpdate {
 		if len(inspection.ExistingPaths) > 0 {
-			message += uiText(locale, "\n\nExisting tool paths for XLSX:\n• ", "\n\n现有 XLSX 工具路径：\n• ", "\n\n既存の XLSX ツールパス：\n• ", "\n\nСуществующие пути инструментов для XLSX:\n• ") + strings.Join(inspection.ExistingPaths, "\n• ")
+			message += uiText(locale, "\n\nExisting tool paths for XLSX:\n• ", "\n\n现有 XLSX 工具路径：\n• ", "\n\n既存の XLSX ツールパス：\n• ") + strings.Join(inspection.ExistingPaths, "\n• ")
 		} else {
 			message += uiText(locale,
 				"\n\nThe existing *.xlsx tool settings are incomplete or incompatible and will be repaired.",
 				"\n\n现有 *.xlsx 工具配置不完整或不兼容，将一并修复。",
-				"\n\n既存の *.xlsx ツール設定が不完全または互換性のない状態です。あわせて修復します。", "\n\nСуществующие настройки инструментов *.xlsx неполны или несовместимы и будут исправлены.",
+				"\n\n既存の *.xlsx ツール設定が不完全または互換性のない状態です。あわせて修復します。",
 			)
 		}
 	}
@@ -373,11 +373,11 @@ func (c *Controller) ConfigureUGit() (UGitConfigurationResult, error) {
 		message += uiText(locale,
 			"\n\nThis repository has tool overrides. Its XLSX entries will also be replaced; wildcard (*.*) tools and rules for other file types will be preserved.",
 			"\n\n此仓库存在优先的工具配置，将一并替换其中的 XLSX 专用项；保留通用（*.*）工具和其他文件类型的规则。",
-			"\n\nこのリポジトリには優先されるツール設定があります。XLSX 専用項目も置き換えます。汎用（*.*）ツールとほかの形式のルールは保持します。", "\n\nВ этом репозитории есть переопределения инструментов. Записи XLSX также будут заменены; универсальные (*.*) инструменты и правила для других типов файлов сохранятся.",
+			"\n\nこのリポジトリには優先されるツール設定があります。XLSX 専用項目も置き換えます。汎用（*.*）ツールとほかの形式のルールは保持します。",
 		)
 	}
-	cancel := uiText(locale, "Cancel", "取消", "キャンセル", "Отмена")
-	configure := uiText(locale, "Configure UGit", "配置 UGit", "UGit を設定", "Настройка UGit")
+	cancel := uiText(locale, "Cancel", "取消", "キャンセル")
+	configure := uiText(locale, "Configure UGit", "配置 UGit", "UGit を設定")
 	answer, err := c.ask(ctx, runtime.MessageDialogOptions{
 		Type: runtime.QuestionDialog, Title: configure,
 		Message: message, Buttons: []string{cancel, configure},
@@ -389,36 +389,36 @@ func (c *Controller) ConfigureUGit() (UGitConfigurationResult, error) {
 	if answer != configure {
 		return UGitConfigurationResult{
 			Cancelled: true, ExecutablePath: executablePath,
-			Message: uiText(locale, "UGit settings were not changed.", "未修改 UGit 配置。", "UGit の設定は変更されていません。", "Настройки UGit не изменились."),
+			Message: uiText(locale, "UGit settings were not changed.", "未修改 UGit 配置。", "UGit の設定は変更されていません。"),
 		}, nil
 	}
 	updated, err := ugit.Configure(ctx, executablePath, repositoryRoot)
 	if err != nil {
-		return UGitConfigurationResult{}, fmt.Errorf("%s: %w", uiText(locale, "configure UGit", "配置 UGit", "UGit の設定", "настройка UGit"), err)
+		return UGitConfigurationResult{}, fmt.Errorf("%s: %w", uiText(locale, "configure UGit", "配置 UGit", "UGit の設定"), err)
 	}
 	return UGitConfigurationResult{
 		Configured: updated.Configured, Changed: true, ExecutablePath: executablePath,
 		Message: uiText(locale,
 			"UGit's *.xlsx diff and merge tools have been updated. If UGit is running, restart it before testing.",
 			"UGit 的 *.xlsx 差异与合并工具已更新。如果 UGit 正在运行，请重启后再测试。",
-			"UGit の *.xlsx 差分・マージツールを更新しました。UGit を起動中の場合は、再起動してから確認してください。", "Инструменты сравнения и слияния *.xlsx в UGit обновлены. Если UGit запущен, перезапустите его перед проверкой.",
+			"UGit の *.xlsx 差分・マージツールを更新しました。UGit を起動中の場合は、再起動してから確認してください。",
 		) + "\n" + ugitConfigurationContext(updated, locale),
 	}, nil
 }
 
 func ugitConfigurationContext(inspection ugit.Inspection, locale string) string {
-	origins := uiText(locale, "No existing *.xlsx settings", "尚无 *.xlsx 配置", "既存の *.xlsx 設定なし", "Нет существующих настроек *.xlsx")
+	origins := uiText(locale, "No existing *.xlsx settings", "尚无 *.xlsx 配置", "既存の *.xlsx 設定なし")
 	if len(inspection.ConfigOrigins) > 0 {
-		origins = strings.Join(inspection.ConfigOrigins, uiText(locale, ", ", "、", "、", ", "))
+		origins = strings.Join(inspection.ConfigOrigins, uiText(locale, ", ", "、", "、"))
 	}
-	message := fmt.Sprintf(uiText(locale, "Git: %s\n*.xlsx setting source: %s", "Git：%s\n*.xlsx 配置来源：%s", "Git：%s\n*.xlsx 設定の参照元：%s", "Git: %s\nИсточник настроек *.xlsx: %s"), inspection.GitPath, origins)
+	message := fmt.Sprintf(uiText(locale, "Git: %s\n*.xlsx setting source: %s", "Git：%s\n*.xlsx 配置来源：%s", "Git：%s\n*.xlsx 設定の参照元：%s"), inspection.GitPath, origins)
 	if inspection.RepositoryRoot != "" {
-		return message + "\n" + uiText(locale, "Repository checked: ", "已检查仓库：", "確認したリポジトリ：", "Проверен репозиторий: ") + inspection.RepositoryRoot
+		return message + "\n" + uiText(locale, "Repository checked: ", "已检查仓库：", "確認したリポジトリ：") + inspection.RepositoryRoot
 	}
 	return message + uiText(locale,
 		"\nOnly global settings were checked. If a repository still opens another tool, use Scan repository folders and repair in Settings to check its overrides.",
 		"\n当前仅检查全局配置。如果某个仓库仍打开其他工具，可在设置中使用“扫描仓库目录并修复”检查覆盖配置。",
-		"\nグローバル設定のみ確認しました。別のツールが開く場合は、設定のフォルダー検索と修復からリポジトリの設定を確認してください。", "\nПроверены только глобальные настройки. Если репозиторий по-прежнему открывает другой инструмент, проверьте его переопределения через «Сканировать папки и исправить репозитории» в настройках.",
+		"\nグローバル設定のみ確認しました。別のツールが開く場合は、設定のフォルダー検索と修復からリポジトリの設定を確認してください。",
 	)
 }
 
@@ -464,12 +464,12 @@ func (c *Controller) beforeClose(ctx context.Context) bool {
 		return false
 	}
 	locale := c.options.Locale
-	save := uiText(locale, "Save and continue", "保存并继续", "保存して続行", "Сохранить и продолжить")
-	discard := uiText(locale, "Continue without saving", "不保存并继续", "保存せずに続行", "Продолжить без сохранения")
-	cancel := uiText(locale, "Cancel", "取消", "キャンセル", "Отмена")
+	save := uiText(locale, "Save and continue", "保存并继续", "保存して続行")
+	discard := uiText(locale, "Continue without saving", "不保存并继续", "保存せずに続行")
+	cancel := uiText(locale, "Cancel", "取消", "キャンセル")
 	answer, err := c.ask(ctx, runtime.MessageDialogOptions{
-		Type: runtime.QuestionDialog, Title: uiText(locale, "Unsaved changes", "有未保存的修改", "未保存の変更", "Несохранённые изменения"),
-		Message:       uiText(locale, "This workbook has unsaved changes.", "当前工作簿有未保存的修改。", "このブックには未保存の変更があります。", "В этой книге есть несохранённые изменения."),
+		Type: runtime.QuestionDialog, Title: uiText(locale, "Unsaved changes", "有未保存的修改", "未保存の変更"),
+		Message:       uiText(locale, "This workbook has unsaved changes.", "当前工作簿有未保存的修改。", "このブックには未保存の変更があります。"),
 		Buttons:       []string{save, discard, cancel},
 		DefaultButton: save, CancelButton: cancel,
 	})
@@ -492,20 +492,20 @@ func (c *Controller) SelectAndOpen() (coreapp.Summary, error) {
 	ctx := c.ctx
 	c.mu.Unlock()
 	locale := c.options.Locale
-	filter := []runtime.FileFilter{{DisplayName: uiText(locale, "Excel workbook (*.xlsx)", "Excel 工作簿 (*.xlsx)", "Excel ブック (*.xlsx)", "Книга Excel (*.xlsx)"), Pattern: "*.xlsx"}}
-	left, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{Title: uiText(locale, "Select the left (local) workbook", "选择左侧（本地）工作簿", "左側（ローカル）のブックを選択", "Выберите левую (локальную) книгу"), Filters: filter})
+	filter := []runtime.FileFilter{{DisplayName: uiText(locale, "Excel workbook (*.xlsx)", "Excel 工作簿 (*.xlsx)", "Excel ブック (*.xlsx)"), Pattern: "*.xlsx"}}
+	left, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{Title: uiText(locale, "Select the left (local) workbook", "选择左侧（本地）工作簿", "左側（ローカル）のブックを選択"), Filters: filter})
 	if err != nil {
 		return coreapp.Summary{}, err
 	}
 	if left == "" {
-		return coreapp.Summary{}, fmt.Errorf("%s", uiText(locale, "Left file selection was cancelled.", "已取消选择左侧文件。", "左側ファイルの選択をキャンセルしました。", "Выбор левого файла отменён."))
+		return coreapp.Summary{}, fmt.Errorf("%s", uiText(locale, "Left file selection was cancelled.", "已取消选择左侧文件。", "左側ファイルの選択をキャンセルしました。"))
 	}
-	right, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{Title: uiText(locale, "Select the right (comparison) workbook", "选择右侧（对比来源）工作簿", "右側（比較元）のブックを選択", "Выберите правую (сравниваемую) книгу"), Filters: filter})
+	right, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{Title: uiText(locale, "Select the right (comparison) workbook", "选择右侧（对比来源）工作簿", "右側（比較元）のブックを選択"), Filters: filter})
 	if err != nil {
 		return coreapp.Summary{}, err
 	}
 	if right == "" {
-		return coreapp.Summary{}, fmt.Errorf("%s", uiText(locale, "Right file selection was cancelled.", "已取消选择右侧文件。", "右側ファイルの選択をキャンセルしました。", "Выбор правого файла отменён."))
+		return coreapp.Summary{}, fmt.Errorf("%s", uiText(locale, "Right file selection was cancelled.", "已取消选择右侧文件。", "右側ファイルの選択をキャンセルしました。"))
 	}
 	return c.OpenFiles(left, right)
 }
@@ -544,13 +544,13 @@ func (c *Controller) SelectRepository() (RepositoryResult, error) {
 	locale := c.options.Locale
 	c.mu.Unlock()
 	path, err := runtime.OpenDirectoryDialog(ctx, runtime.OpenDialogOptions{
-		Title: uiText(locale, "Open local Git repository", "打开本地 Git 仓库", "ローカルの Git リポジトリを開く", "Открыть локальный Git-репозиторий"),
+		Title: uiText(locale, "Open local Git repository", "打开本地 Git 仓库", "ローカルの Git リポジトリを開く"),
 	})
 	if err != nil {
 		return RepositoryResult{}, err
 	}
 	if path == "" {
-		return RepositoryResult{}, errors.New(uiText(locale, "Repository selection was cancelled.", "已取消选择仓库。", "リポジトリの選択をキャンセルしました。", "Выбор репозитория отменён."))
+		return RepositoryResult{}, errors.New(uiText(locale, "Repository selection was cancelled.", "已取消选择仓库。", "リポジトリの選択をキャンセルしました。"))
 	}
 	return c.OpenRepository(path)
 }
@@ -587,7 +587,7 @@ func (c *Controller) openRepositoryInternal(
 		return RepositoryResult{}, fmt.Errorf(uiText(locale,
 			"The repository does not contain the specified XLSX file: %s",
 			"仓库中不存在指定的 XLSX 文件：%s",
-			"指定された XLSX ファイルはリポジトリにありません：%s", "В репозитории нет указанного файла XLSX: %s"), selectedFile)
+			"指定された XLSX ファイルはリポジトリにありません：%s"), selectedFile)
 	}
 	if selectedRef != "" {
 		if _, err := repo.ResolveReference(selectedRef, info.Branches); err != nil {
@@ -629,7 +629,7 @@ func (c *Controller) openRepositoryInternal(
 			view.Notice = fmt.Sprintf(uiText(locale,
 				"The repository opened, but the changed-workbook list could not be loaded: %v",
 				"仓库已打开，但差异表加载失败：%v",
-				"リポジトリは開きましたが、差分のあるブック一覧を読み込めませんでした：%v", "Репозиторий открыт, но список изменённых книг не загрузился: %v"), diffErr)
+				"リポジトリは開きましたが、差分のあるブック一覧を読み込めませんでした：%v"), diffErr)
 		} else {
 			view.DifferenceFiles = differenceFiles
 			view.DifferenceIndexing = !cached
@@ -659,7 +659,7 @@ func (c *Controller) openRepositoryInternal(
 			c.repositoryView.Notice = appendNotice(c.repositoryView.Notice, uiText(locale,
 				"The repository opened, but it could not be added to recent repositories.",
 				"仓库已打开，但无法记录为最近仓库。",
-				"リポジトリは開きましたが、最近使ったリポジトリに記録できませんでした。", "Репозиторий открыт, но его не удалось добавить в недавние репозитории."))
+				"リポジトリは開きましたが、最近使ったリポジトリに記録できませんでした。"))
 			c.mu.Unlock()
 		}
 		c.recordRepositoryRef(info.Root, view.SelectedRef)
@@ -687,11 +687,11 @@ func viewFromInfo(info repository.Info, width int, locale string) RepositoryView
 		LeftMessage: uiText(locale,
 			"Select an XLSX file from the repository tree.",
 			"请先在左侧目录树中选择一个 XLSX 表格。",
-			"リポジトリツリーから XLSX ファイルを選択してください。", "Выберите файл XLSX в дереве репозитория."),
+			"リポジトリツリーから XLSX ファイルを選択してください。"),
 		RightMessage: uiText(locale,
 			"Select an XLSX file from the repository tree.",
 			"请先在左侧目录树中选择一个 XLSX 表格。",
-			"リポジトリツリーから XLSX ファイルを選択してください。", "Выберите файл XLSX в дереве репозитория."),
+			"リポジトリツリーから XLSX ファイルを選択してください。"),
 		SidebarWidth: width,
 	}
 }
@@ -700,7 +700,7 @@ func (c *Controller) Repository() (RepositoryResult, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if c.repo == nil {
-		return RepositoryResult{}, errors.New(uiText(c.options.Locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。", "Git-репозиторий не открыт."))
+		return RepositoryResult{}, errors.New(uiText(c.options.Locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。"))
 	}
 	result := RepositoryResult{Repository: cloneRepositoryView(c.repositoryView)}
 	if c.session != nil {
@@ -730,14 +730,14 @@ func (c *Controller) selectRepositoryFileLocked(relative, requestedRef string) (
 	c.repositoryView.LoadGeneration = generation
 	c.mu.Unlock()
 	if repo == nil {
-		return RepositoryResult{}, errors.New(uiText(locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。", "Git-репозиторий не открыт."))
+		return RepositoryResult{}, errors.New(uiText(locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。"))
 	}
 	if !slices.Contains(view.Files, relative) {
 		c.finishRepositoryLoadError(generation)
 		return RepositoryResult{}, fmt.Errorf(uiText(locale,
 			"The repository does not contain this XLSX file: %s",
 			"仓库中不存在该 XLSX 文件：%s",
-			"この XLSX ファイルはリポジトリにありません：%s", "В репозитории нет этого файла XLSX: %s"), relative)
+			"この XLSX ファイルはリポジトリにありません：%s"), relative)
 	}
 	leftPath, err := repo.ResolveRelativePath(relative)
 	if err != nil {
@@ -750,7 +750,7 @@ func (c *Controller) selectRepositoryFileLocked(relative, requestedRef string) (
 			fmt.Sprintf(uiText(locale,
 				"This workbook is missing from the worktree.\nPath: %s",
 				"当前工作区中不存在该表格。\n路径：%s",
-				"このブックはワークツリーにありません。\nパス：%s", "Этой книги нет в рабочем дереве.\nПуть: %s"), relative),
+				"このブックはワークツリーにありません。\nパス：%s"), relative),
 		)
 	}
 	refValue := requestedRef
@@ -772,7 +772,7 @@ func (c *Controller) selectRepositoryFileLocked(relative, requestedRef string) (
 			fmt.Sprintf(uiText(locale,
 				"This workbook could not be opened.\n%v",
 				"无法打开该表格。\n%v",
-				"このブックを開けませんでした。\n%v", "Не удалось открыть эту книгу.\n%v"), err),
+				"このブックを開けませんでした。\n%v"), err),
 		)
 	}
 	rightState, rightMessage, tempPath, selectedFullRef := c.loadRight(repo, view, session, refValue, relative)
@@ -791,7 +791,7 @@ func (c *Controller) selectRepositoryFileLocked(relative, requestedRef string) (
 		return RepositoryResult{}, errors.New(uiText(locale,
 			"A newer selection replaced this load request.",
 			"加载结果已被新的选择替代。",
-			"別の項目が選択されたため、この読み込み結果は破棄されました。", "Этот запрос загрузки заменён более новым выбором."))
+			"別の項目が選択されたため、この読み込み結果は破棄されました。"))
 	}
 	old, oldTemp := c.session, c.tempRight
 	c.session, c.tempRight = session, tempPath
@@ -823,7 +823,7 @@ func (c *Controller) installRepositoryFileFailure(
 		return RepositoryResult{}, errors.New(uiText(c.options.Locale,
 			"A newer selection replaced this load request.",
 			"加载结果已被新的选择替代。",
-			"別の項目が選択されたため、この読み込み結果は破棄されました。", "Этот запрос загрузки заменён более новым выбором."))
+			"別の項目が選択されたため、この読み込み結果は破棄されました。"))
 	}
 	old, oldTemp := c.session, c.tempRight
 	c.session, c.tempRight = nil, ""
@@ -852,13 +852,13 @@ func (c *Controller) loadRight(
 		return "no-branches", uiText(c.options.Locale,
 			"This repository has no other revision to compare.",
 			"当前仓库中没有可用于对比的其他版本。",
-			"このリポジトリには比較できるほかのリビジョンがありません。", "В этом репозитории нет другой версии для сравнения."), "", ""
+			"このリポジトリには比較できるほかのリビジョンがありません。"), "", ""
 	}
 	if refValue == "" {
 		return "no-ref", uiText(c.options.Locale,
 			"Select a Git revision to compare.",
 			"请选择一个用于对比的 Git 版本。",
-			"比較する Git リビジョンを選択してください。", "Выберите версию Git для сравнения."), "", ""
+			"比較する Git リビジョンを選択してください。"), "", ""
 	}
 	branch, err := repo.ResolveReference(refValue, view.Branches)
 	if err != nil {
@@ -871,7 +871,7 @@ func (c *Controller) loadRight(
 			fmt.Sprintf(uiText(c.options.Locale,
 				"This workbook is not present in the selected revision.\nRevision: %s\nPath: %s",
 				"所选版本中不存在此表格。\n版本：%s\n路径：%s",
-				"選択したリビジョンにこのブックはありません。\nリビジョン：%s\nパス：%s", "Этой книги нет в выбранной версии.\nВерсия: %s\nПуть: %s"), branch.Name, relative),
+				"選択したリビジョンにこのブックはありません。\nリビジョン：%s\nパス：%s"), branch.Name, relative),
 			"", selectedFullRef
 	}
 	if err != nil {
@@ -883,7 +883,7 @@ func (c *Controller) loadRight(
 			fmt.Sprintf(uiText(c.options.Locale,
 				"The file in the selected revision is not a readable XLSX workbook.\n%v",
 				"所选版本中的文件无法作为 XLSX 工作簿打开。\n%v",
-				"選択したリビジョンのファイルを XLSX ブックとして開けません。\n%v", "Файл в выбранной версии не открывается как книга XLSX.\n%v"), err),
+				"選択したリビジョンのファイルを XLSX ブックとして開けません。\n%v"), err),
 			"", selectedFullRef
 	}
 	return "ready", "", tempPath, selectedFullRef
@@ -897,7 +897,7 @@ func (c *Controller) SelectRepositoryRef(refValue string) (RepositoryResult, err
 	view := cloneRepositoryView(c.repositoryView)
 	if repo == nil {
 		c.mu.Unlock()
-		return RepositoryResult{}, errors.New(uiText(c.options.Locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。", "Git-репозиторий не открыт."))
+		return RepositoryResult{}, errors.New(uiText(c.options.Locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。"))
 	}
 	if session == nil || view.SelectedFile == "" {
 		branch, err := repo.ResolveReference(refValue, view.Branches)
@@ -915,7 +915,7 @@ func (c *Controller) SelectRepositoryRef(refValue string) (RepositoryResult, err
 			return RepositoryResult{}, errors.New(uiText(c.options.Locale,
 				"A newer selection replaced this load request.",
 				"加载结果已被新的选择替代。",
-				"別の項目が選択されたため、この読み込み結果は破棄されました。", "Этот запрос загрузки заменён более новым выбором."))
+				"別の項目が選択されたため、この読み込み結果は破棄されました。"))
 		}
 		c.repositoryView.SelectedRef = branch.FullName
 		if diffErr != nil {
@@ -924,7 +924,7 @@ func (c *Controller) SelectRepositoryRef(refValue string) (RepositoryResult, err
 				fmt.Sprintf(uiText(c.options.Locale,
 					"The comparison revision changed, but the changed-workbook list could not be loaded: %v",
 					"已切换对比版本，但差异表加载失败：%v",
-					"比較するリビジョンを変更しましたが、差分のあるブック一覧を読み込めませんでした：%v", "Версия для сравнения изменилась, но список изменённых книг не загрузился: %v"), diffErr),
+					"比較するリビジョンを変更しましたが、差分のあるブック一覧を読み込めませんでした：%v"), diffErr),
 			)
 		} else {
 			c.repositoryView.DifferenceFiles = differenceFiles
@@ -955,7 +955,7 @@ func (c *Controller) SelectRepositoryRef(refValue string) (RepositoryResult, err
 		message = fmt.Sprintf(uiText(c.options.Locale,
 			"This workbook is not present in the selected revision.\nRevision: %s\nPath: %s",
 			"所选版本中不存在此表格。\n版本：%s\n路径：%s",
-			"選択したリビジョンにこのブックはありません。\nリビジョン：%s\nパス：%s", "Этой книги нет в выбранной версии.\nВерсия: %s\nПуть: %s"), branch.Name, view.SelectedFile)
+			"選択したリビジョンにこのブックはありません。\nリビジョン：%s\nパス：%s"), branch.Name, view.SelectedFile)
 		if err := session.DetachRight(readOnlyRevisionLabel(branch.Name, c.options.Locale)); err != nil {
 			c.finishRepositoryLoadError(generation)
 			return RepositoryResult{}, err
@@ -973,7 +973,7 @@ func (c *Controller) SelectRepositoryRef(refValue string) (RepositoryResult, err
 		message = fmt.Sprintf(uiText(c.options.Locale,
 			"The file in the selected revision is not a readable XLSX workbook.\n%v",
 			"所选版本中的文件无法作为 XLSX 工作簿打开。\n%v",
-			"選択したリビジョンのファイルを XLSX ブックとして開けません。\n%v", "Файл в выбранной версии не открывается как книга XLSX.\n%v"), err)
+			"選択したリビジョンのファイルを XLSX ブックとして開けません。\n%v"), err)
 		_ = session.DetachRight(readOnlyRevisionLabel(branch.Name, c.options.Locale))
 	}
 	differenceFiles, signature, cached, diffErr := c.prepareRepositoryDifferenceIndex(
@@ -986,7 +986,7 @@ func (c *Controller) SelectRepositoryRef(refValue string) (RepositoryResult, err
 		return RepositoryResult{}, errors.New(uiText(c.options.Locale,
 			"A newer selection replaced this load request.",
 			"加载结果已被新的选择替代。",
-			"別の項目が選択されたため、この読み込み結果は破棄されました。", "Этот запрос загрузки заменён более новым выбором."))
+			"別の項目が選択されたため、この読み込み結果は破棄されました。"))
 	}
 	oldTemp := c.tempRight
 	c.tempRight = temp
@@ -1001,7 +1001,7 @@ func (c *Controller) SelectRepositoryRef(refValue string) (RepositoryResult, err
 			fmt.Sprintf(uiText(c.options.Locale,
 				"The comparison revision changed, but the changed-workbook list could not be loaded: %v",
 				"已切换对比版本，但差异表加载失败：%v",
-				"比較するリビジョンを変更しましたが、差分のあるブック一覧を読み込めませんでした：%v", "Версия для сравнения изменилась, но список изменённых книг не загрузился: %v"), diffErr),
+				"比較するリビジョンを変更しましたが、差分のあるブック一覧を読み込めませんでした：%v"), diffErr),
 		)
 	} else {
 		c.repositoryView.DifferenceFiles = differenceFiles
@@ -1025,7 +1025,7 @@ func (c *Controller) RefreshRepository() (RepositoryResult, error) {
 	oldView := cloneRepositoryView(c.repositoryView)
 	c.mu.Unlock()
 	if repo == nil {
-		return RepositoryResult{}, errors.New(uiText(c.options.Locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。", "Git-репозиторий не открыт."))
+		return RepositoryResult{}, errors.New(uiText(c.options.Locale, "No Git repository is open.", "尚未打开 Git 仓库。", "Git リポジトリが開かれていません。"))
 	}
 	info, err := repo.Refresh()
 	if err != nil {
@@ -1047,7 +1047,7 @@ func (c *Controller) RefreshRepository() (RepositoryResult, error) {
 		view.LeftMessage = uiText(c.options.Locale,
 			"Select an XLSX file from the repository tree.",
 			"请先在左侧目录树中选择一个 XLSX 表格。",
-			"リポジトリツリーから XLSX ファイルを選択してください。", "Выберите файл XLSX в дереве репозитория.")
+			"リポジトリツリーから XLSX ファイルを選択してください。")
 		view.RightMessage = view.LeftMessage
 		view.ComparisonActive = false
 		if view.SelectedRef != "" {
@@ -1070,7 +1070,7 @@ func (c *Controller) RefreshRepository() (RepositoryResult, error) {
 				view.Notice = appendNotice(view.Notice, fmt.Sprintf(uiText(c.options.Locale,
 					"The repository refreshed, but the changed-workbook list could not be loaded: %v",
 					"仓库已刷新，但差异表加载失败：%v",
-					"リポジトリを更新しましたが、差分のあるブック一覧を読み込めませんでした：%v", "Репозиторий обновлён, но список изменённых книг не загрузился: %v"), diffErr))
+					"リポジトリを更新しましたが、差分のあるブック一覧を読み込めませんでした：%v"), diffErr))
 			} else {
 				view.DifferenceFiles = differenceFiles
 				view.DifferenceIndexing = !cached
@@ -1116,7 +1116,7 @@ func (c *Controller) RefreshRepository() (RepositoryResult, error) {
 			view.Notice = appendNotice(view.Notice, fmt.Sprintf(uiText(c.options.Locale,
 				"The repository refreshed, but the changed-workbook list could not be loaded: %v",
 				"仓库已刷新，但差异表加载失败：%v",
-				"リポジトリを更新しましたが、差分のあるブック一覧を読み込めませんでした：%v", "Репозиторий обновлён, но список изменённых книг не загрузился: %v"), diffErr))
+				"リポジトリを更新しましたが、差分のあるブック一覧を読み込めませんでした：%v"), diffErr))
 		} else {
 			view.DifferenceFiles = differenceFiles
 			view.DifferenceIndexing = !cached
@@ -1217,7 +1217,7 @@ func (c *Controller) ReloadExternal(side string) (ExternalReloadResult, error) {
 		err = fmt.Errorf(uiText(locale,
 			"Unknown reload source: %s",
 			"未知的重载来源：%s",
-			"再読み込み元が不明です：%s", "Неизвестный источник перезагрузки: %s"), side)
+			"再読み込み元が不明です：%s"), side)
 	}
 	if err != nil {
 		c.loadMu.Unlock()
@@ -1232,7 +1232,7 @@ func (c *Controller) ReloadExternal(side string) (ExternalReloadResult, error) {
 		return ExternalReloadResult{}, errors.New(uiText(locale,
 			"A newer selection replaced this reload request.",
 			"重载结果已被新的选择替代。",
-			"別の項目が選択されたため、この再読み込み結果は破棄されました。", "Этот запрос перезагрузки заменён более новым выбором."))
+			"別の項目が選択されたため、この再読み込み結果は破棄されました。"))
 	}
 
 	if side == "left" && inRepository {
@@ -1241,13 +1241,13 @@ func (c *Controller) ReloadExternal(side string) (ExternalReloadResult, error) {
 			return ExternalReloadResult{}, fmt.Errorf("%s: %w", uiText(locale,
 				"The workbook was reloaded, but the repository status could not be refreshed",
 				"表格已重载，但仓库状态刷新失败",
-				"ブックは再読み込みされましたが、リポジトリの状態を更新できませんでした", "Книга перезагружена, но статус репозитория обновить не удалось"), refreshErr)
+				"ブックは再読み込みされましたが、リポジトリの状態を更新できませんでした"), refreshErr)
 		}
 		if result.Summary == nil {
 			return ExternalReloadResult{}, errors.New(uiText(locale,
 				"The workbook was reloaded, but the current session is no longer available.",
 				"表格已重载，但当前会话已不可用。",
-				"ブックは再読み込みされましたが、現在のセッションは利用できなくなりました。", "Книга перезагружена, но текущая сессия больше недоступна."))
+				"ブックは再読み込みされましたが、現在のセッションは利用できなくなりました。"))
 		}
 		view := result.Repository
 		return ExternalReloadResult{
@@ -1275,20 +1275,20 @@ func externalReloadNotice(side string, readonlyLeft bool, locale string) string 
 		return uiText(locale,
 			"The read-only workbook on the right changed outside SheetProof. The latest version has been reloaded.",
 			"右侧只读工作簿已被其他程序修改，现已重新载入磁盘上的最新版本。",
-			"右側の読み取り専用ブックがほかのアプリで変更されたため、ディスク上の最新版を再読み込みしました。", "Книга только для чтения справа была изменена вне SheetProof. Загружена последняя версия.",
+			"右側の読み取り専用ブックがほかのアプリで変更されたため、ディスク上の最新版を再読み込みしました。",
 		)
 	}
 	if readonlyLeft {
 		return uiText(locale,
 			"The read-only workbook on the left changed outside SheetProof. The latest version has been reloaded.",
 			"左侧只读工作簿已被其他程序修改，现已重新载入磁盘上的最新版本。",
-			"左側の読み取り専用ブックがほかのアプリで変更されたため、ディスク上の最新版を再読み込みしました。", "Книга только для чтения слева была изменена вне SheetProof. Загружена последняя версия.",
+			"左側の読み取り専用ブックがほかのアプリで変更されたため、ディスク上の最新版を再読み込みしました。",
 		)
 	}
 	return uiText(locale,
 		"The workbook on the left has been reloaded from disk.",
 		"左侧工作簿已重新载入磁盘上的最新版本。",
-		"左側のブックをディスクから再読み込みしました。", "Книга слева перезагружена с диска.",
+		"左側のブックをディスクから再読み込みしました。",
 	)
 }
 
@@ -1618,14 +1618,14 @@ func (c *Controller) Save() (coreapp.Summary, error) {
 		}
 	}
 	if inRepository && view.Operation != "" && ctx != nil && ctx.Value("frontend") != nil {
-		cancel := uiText(locale, "Cancel", "取消", "キャンセル", "Отмена")
-		saveAnyway := uiText(locale, "Save anyway", "仍然保存", "このまま保存", "Всё равно сохранить")
+		cancel := uiText(locale, "Cancel", "取消", "キャンセル")
+		saveAnyway := uiText(locale, "Save anyway", "仍然保存", "このまま保存")
 		answer, dialogErr := c.ask(ctx, runtime.MessageDialogOptions{
-			Type: runtime.WarningDialog, Title: uiText(locale, "Git operation in progress", "Git 操作正在进行", "Git 操作の実行中", "Выполняется операция Git"),
+			Type: runtime.WarningDialog, Title: uiText(locale, "Git operation in progress", "Git 操作正在进行", "Git 操作の実行中"),
 			Message: fmt.Sprintf(uiText(locale,
 				"The repository is currently running %s. Saving changes only the current XLSX file; it does not complete or recover the Git operation.",
 				"仓库正在进行 %s。保存只会修改当前 XLSX 文件，不会完成或恢复该 Git 操作。",
-				"リポジトリで %s が進行中です。保存しても現在の XLSX ファイルが更新されるだけで、Git 操作の完了や復旧は行いません。", "В репозитории сейчас выполняется %s. Сохранение изменит только текущий файл XLSX; оно не завершит и не восстановит операцию Git.",
+				"リポジトリで %s が進行中です。保存しても現在の XLSX ファイルが更新されるだけで、Git 操作の完了や復旧は行いません。",
 			), view.Operation),
 			Buttons: []string{cancel, saveAnyway}, DefaultButton: cancel, CancelButton: cancel,
 		})
@@ -1633,7 +1633,7 @@ func (c *Controller) Save() (coreapp.Summary, error) {
 			return coreapp.Summary{}, dialogErr
 		}
 		if answer != saveAnyway {
-			return session.Summary(), errors.New(uiText(locale, "Save was cancelled.", "已取消保存。", "保存をキャンセルしました。", "Сохранение отменено."))
+			return session.Summary(), errors.New(uiText(locale, "Save was cancelled.", "已取消保存。", "保存をキャンセルしました。"))
 		}
 	}
 	if err := session.Save(""); err != nil {
@@ -1692,7 +1692,7 @@ func (c *Controller) Save() (coreapp.Summary, error) {
 							cacheWarning = fmt.Sprintf(uiText(locale,
 								"The changed-workbook result was updated, but it could not be cached: %v",
 								"当前表格的差异表结果已更新，但无法缓存：%v",
-								"差分のあるブック一覧は更新されましたが、キャッシュに保存できませんでした：%v", "Результат списка изменённых книг обновлён, но его не удалось кэшировать: %v"), cacheErr)
+								"差分のあるブック一覧は更新されましたが、キャッシュに保存できませんでした：%v"), cacheErr)
 						}
 						cached = true
 					}
@@ -1716,7 +1716,7 @@ func (c *Controller) Save() (coreapp.Summary, error) {
 						fmt.Sprintf(uiText(locale,
 							"The workbook was saved, but the changed-workbook list could not be refreshed: %v",
 							"保存成功，但差异表刷新失败：%v",
-							"ブックは保存されましたが、差分のあるブック一覧を更新できませんでした：%v", "Книга сохранена, но список изменённых книг не удалось обновить: %v"), diffErr),
+							"ブックは保存されましたが、差分のあるブック一覧を更新できませんでした：%v"), diffErr),
 					)
 				} else {
 					c.repositoryView.DifferenceFiles = differenceFiles
@@ -1761,10 +1761,10 @@ func (c *Controller) SaveAs() (coreapp.Summary, error) {
 	defaultDirectory := c.prefs.SaveDirectory()
 	c.prefsMu.Unlock()
 	target, err := runtime.SaveFileDialog(ctx, runtime.SaveDialogOptions{
-		Title:                uiText(summary.Options.Locale, "Save workbook as", "工作簿另存为", "ブックに名前を付けて保存", "Сохранить книгу как"),
+		Title:                uiText(summary.Options.Locale, "Save workbook as", "工作簿另存为", "ブックに名前を付けて保存"),
 		DefaultDirectory:     defaultDirectory,
 		DefaultFilename:      defaultFilename,
-		Filters:              []runtime.FileFilter{{DisplayName: uiText(summary.Options.Locale, "Excel workbook (*.xlsx)", "Excel 工作簿 (*.xlsx)", "Excel ブック (*.xlsx)", "Книга Excel (*.xlsx)"), Pattern: "*.xlsx"}},
+		Filters:              []runtime.FileFilter{{DisplayName: uiText(summary.Options.Locale, "Excel workbook (*.xlsx)", "Excel 工作簿 (*.xlsx)", "Excel ブック (*.xlsx)"), Pattern: "*.xlsx"}},
 		CanCreateDirectories: true,
 	})
 	if err != nil {
@@ -1781,7 +1781,7 @@ func (c *Controller) SaveAs() (coreapp.Summary, error) {
 		if c.repo != nil {
 			c.repositoryView.Notice = appendNotice(
 				c.repositoryView.Notice,
-				uiText(summary.Options.Locale, "Copy exported: ", "已导出副本：", "コピーを書き出しました：", "Копия экспортирована: ")+target,
+				uiText(summary.Options.Locale, "Copy exported: ", "已导出副本：", "コピーを書き出しました：")+target,
 			)
 		}
 		c.mu.Unlock()
@@ -1806,7 +1806,7 @@ func (c *Controller) getSession() (*coreapp.Session, error) {
 		return nil, fmt.Errorf("%s", uiText(c.options.Locale,
 			"Open two workbooks or select an XLSX file from a repository first.",
 			"请先打开左右工作簿，或从仓库中选择 XLSX 文件。",
-			"先に 2 つのブックを開くか、リポジトリから XLSX ファイルを選択してください。", "Сначала откройте две книги или выберите файл XLSX из репозитория.",
+			"先に 2 つのブックを開くか、リポジトリから XLSX ファイルを選択してください。",
 		))
 	}
 	return c.session, nil
@@ -1831,9 +1831,9 @@ func (c *Controller) confirmSessionSwitch() error {
 	}
 	var answer string
 	var err error
-	save := uiText(locale, "Save and continue", "保存并继续", "保存して続行", "Сохранить и продолжить")
-	discard := uiText(locale, "Continue without saving", "不保存并继续", "保存せずに続行", "Продолжить без сохранения")
-	cancel := uiText(locale, "Cancel", "取消", "キャンセル", "Отмена")
+	save := uiText(locale, "Save and continue", "保存并继续", "保存して続行")
+	discard := uiText(locale, "Continue without saving", "不保存并继续", "保存せずに続行")
+	cancel := uiText(locale, "Cancel", "取消", "キャンセル")
 	if c.switchPrompt != nil {
 		answer, err = c.switchPrompt()
 	} else {
@@ -1841,12 +1841,12 @@ func (c *Controller) confirmSessionSwitch() error {
 			return errors.New(uiText(locale,
 				"This workbook has unsaved changes. Switching cannot be confirmed without the desktop interface.",
 				"当前工作簿有未保存的修改；无界面模式下无法确认是否切换。",
-				"このブックには未保存の変更があります。画面を表示しないモードでは切り替えを確認できません。", "В этой книге есть несохранённые изменения. Без настольного интерфейса невозможно подтвердить переключение.",
+				"このブックには未保存の変更があります。画面を表示しないモードでは切り替えを確認できません。",
 			))
 		}
 		answer, err = c.ask(ctx, runtime.MessageDialogOptions{
-			Type: runtime.QuestionDialog, Title: uiText(locale, "Unsaved changes", "有未保存的修改", "未保存の変更", "Несохранённые изменения"),
-			Message:       uiText(locale, "This workbook has unsaved changes.", "当前工作簿有未保存的修改。", "このブックには未保存の変更があります。", "В этой книге есть несохранённые изменения."),
+			Type: runtime.QuestionDialog, Title: uiText(locale, "Unsaved changes", "有未保存的修改", "未保存の変更"),
+			Message:       uiText(locale, "This workbook has unsaved changes.", "当前工作簿有未保存的修改。", "このブックには未保存の変更があります。"),
 			Buttons:       []string{save, discard, cancel},
 			DefaultButton: save, CancelButton: cancel,
 		})
@@ -1861,7 +1861,7 @@ func (c *Controller) confirmSessionSwitch() error {
 	case discard, "不保存并继续":
 		return nil
 	default:
-		return errors.New(uiText(locale, "Switch was cancelled.", "已取消切换。", "切り替えをキャンセルしました。", "Переключение отменено."))
+		return errors.New(uiText(locale, "Switch was cancelled.", "已取消切换。", "切り替えをキャンセルしました。"))
 	}
 }
 
@@ -1895,7 +1895,7 @@ func (c *Controller) handleFileDrop(_ int, _ int, paths []string) {
 			c.repositoryView.Notice = uiText(locale,
 				"The first folder was opened; the other dropped items were ignored.",
 				"已打开第一个目录，其余拖入项已忽略。",
-				"最初のフォルダーを開きました。ほかのドロップ項目は無視されました。", "Первая папка открыта; остальные перетащенные элементы проигнорированы.")
+				"最初のフォルダーを開きました。ほかのドロップ項目は無視されました。")
 			result.Repository.Notice = c.repositoryView.Notice
 			c.mu.Unlock()
 		}
@@ -1922,8 +1922,6 @@ func workspaceLabel(view RepositoryView, locale string) string {
 		prefix = "当前工作区"
 	case localization.Japanese:
 		prefix = "現在のワークツリー"
-	case localization.Russian:
-		prefix = "Текущее рабочее дерево"
 	}
 	if view.Detached {
 		return prefix + " · Detached HEAD"
@@ -1937,8 +1935,6 @@ func comparisonRevisionLabel(locale string) string {
 		return "对比版本（只读）"
 	case localization.Japanese:
 		return "比較対象のリビジョン（読み取り専用）"
-	case localization.Russian:
-		return "Версия для сравнения (только чтение)"
 	default:
 		return "Comparison revision (read-only)"
 	}
@@ -1950,8 +1946,6 @@ func readOnlyRevisionLabel(name, locale string) string {
 		return name + "（只读）"
 	case localization.Japanese:
 		return name + "（読み取り専用）"
-	case localization.Russian:
-		return name + " (только чтение)"
 	default:
 		return name + " (read-only)"
 	}
@@ -2031,7 +2025,7 @@ func (c *Controller) startRepositoryDifferenceIndex(
 			err = errors.New(uiText(locale,
 				"An unexpected internal error occurred while reading a workbook for the changed-workbook list.",
 				"读取工作簿以建立差异表索引时发生内部错误。",
-				"差分のあるブック一覧の作成中に、ブックの読み取りで内部エラーが発生しました。", "При чтении книги для списка изменённых книг произошла непредвиденная внутренняя ошибка."))
+				"差分のあるブック一覧の作成中に、ブックの読み取りで内部エラーが発生しました。"))
 		}
 		cacheWarning := ""
 		if err == nil {
@@ -2042,7 +2036,7 @@ func (c *Controller) startRepositoryDifferenceIndex(
 				err = errors.New(uiText(locale,
 					"The repository changed while the changed-workbook list was being built. Refresh and try again.",
 					"建立差异表索引期间仓库内容发生变化，请刷新后重试。",
-					"差分のあるブック一覧の作成中にリポジトリが変更されました。更新してからやり直してください。", "Репозиторий изменился во время построения списка изменённых книг. Обновите и повторите попытку."))
+					"差分のあるブック一覧の作成中にリポジトリが変更されました。更新してからやり直してください。"))
 			}
 		}
 		if err == nil && indexContext.Err() == nil {
@@ -2059,7 +2053,7 @@ func (c *Controller) startRepositoryDifferenceIndex(
 					cacheWarning = fmt.Sprintf(uiText(locale,
 						"The changed-workbook list was built, but it could not be cached: %v",
 						"差异表索引已建立，但无法缓存：%v",
-						"差分のあるブック一覧は作成されましたが、キャッシュに保存できませんでした：%v", "Список изменённых книг построен, но его не удалось кэшировать: %v"), cacheErr)
+						"差分のあるブック一覧は作成されましたが、キャッシュに保存できませんでした：%v"), cacheErr)
 				}
 			}
 			c.mu.Unlock()
@@ -2081,7 +2075,7 @@ func (c *Controller) startRepositoryDifferenceIndex(
 				fmt.Sprintf(uiText(locale,
 					"The changed-workbook list could not be built: %v",
 					"差异表索引建立失败：%v",
-					"差分のあるブック一覧を作成できませんでした：%v", "Не удалось построить список изменённых книг: %v"), err),
+					"差分のあるブック一覧を作成できませんでした：%v"), err),
 			)
 			return
 		}
@@ -2159,7 +2153,7 @@ func exactRepositoryDifferenceFiles(
 			return nil, nil, fmt.Errorf("%s: %w", fmt.Sprintf(uiText(locale,
 				"compare %s",
 				"比较 %s",
-				"%s を比較", "сравнение %s"), relative), openErr)
+				"%s を比較"), relative), openErr)
 		}
 		summary := session.Summary()
 		closeErr := session.Close()
@@ -2168,7 +2162,7 @@ func exactRepositoryDifferenceFiles(
 			return nil, nil, fmt.Errorf("%s: %w", fmt.Sprintf(uiText(locale,
 				"close %s",
 				"关闭 %s",
-				"%s を閉じる", "закрытие %s"), relative), closeErr)
+				"%s を閉じる"), relative), closeErr)
 		}
 		if !summary.Diff.Equal {
 			result = append(result, relative)
@@ -2189,22 +2183,22 @@ func formatSkippedDifferenceIndexFiles(files []string, locale string) string {
 	if len(visible) > visibleLimit {
 		visible = visible[:visibleLimit]
 	}
-	separator := uiText(locale, ", ", "、", "、", ", ")
+	separator := uiText(locale, ", ", "、", "、")
 	message := fmt.Sprintf(uiText(locale,
 		"The changed-workbook list skipped unreadable XLSX files: %s",
 		"差异表索引已跳过无法解析的 XLSX：%s",
-		"差分のあるブック一覧では、読み込めない XLSX ファイルを除外しました：%s", "Список изменённых книг пропустил нечитаемые файлы XLSX: %s"),
+		"差分のあるブック一覧では、読み込めない XLSX ファイルを除外しました：%s"),
 		strings.Join(visible, separator))
 	if remaining := len(files) - len(visible); remaining > 0 {
 		message += fmt.Sprintf(uiText(locale,
 			" and %d more",
 			" 等 %d 个文件",
-			" ほか %d 件", " и ещё %d"), remaining)
+			" ほか %d 件"), remaining)
 	}
 	return message + uiText(locale,
 		". Fix the files, then refresh the repository to check again.",
 		"；修复文件后刷新仓库即可重新检查。",
-		"。ファイルを修正し、リポジトリを更新すると再確認できます。", ". Исправьте файлы и обновите репозиторий, чтобы проверить снова.")
+		"。ファイルを修正し、リポジトリを更新すると再確認できます。")
 }
 
 func (c *Controller) recordRepositoryRef(root, ref string) {
@@ -2222,7 +2216,7 @@ func (c *Controller) recordRepositoryRef(root, ref string) {
 				uiText(c.options.Locale,
 					"The comparison revision was selected, but the preference could not be saved.",
 					"已选择对比版本，但无法记录该版本偏好。",
-					"比較するリビジョンは選択されましたが、設定を保存できませんでした。", "Версия для сравнения выбрана, но сохранить этот выбор не удалось."),
+					"比較するリビジョンは選択されましたが、設定を保存できませんでした。"),
 			)
 		}
 		c.mu.Unlock()
@@ -2236,14 +2230,12 @@ func appendNotice(current, addition string) string {
 	return current + "\n" + addition
 }
 
-func uiText(locale, english, chinese, japanese, russian string) string {
+func uiText(locale, english, chinese, japanese string) string {
 	switch localization.Normalize(locale) {
 	case localization.SimplifiedChinese:
 		return chinese
 	case localization.Japanese:
 		return japanese
-	case localization.Russian:
-		return russian
 	default:
 		return english
 	}

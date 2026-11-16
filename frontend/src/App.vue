@@ -4510,7 +4510,6 @@ onBeforeUnmount(() => {
                 <option value="en">English</option>
                 <option value="zh-CN">简体中文</option>
                 <option value="ja">日本語</option>
-                <option value="ru">Русский</option>
               </select>
             </label>
           </section>
