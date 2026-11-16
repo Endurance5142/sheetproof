@@ -1,6 +1,6 @@
 <!-- Generated from product facts and locale content. Do not edit directly. -->
 
-English | [简体中文](CHANGELOG.zh-CN.md) | [日本語](CHANGELOG.ja.md)
+English | [简体中文](CHANGELOG.zh-CN.md) | [日本語](CHANGELOG.ja.md) | [Русский](CHANGELOG.ru.md)
 
 # Changelog
 
